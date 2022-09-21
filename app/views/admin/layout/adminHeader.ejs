@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>XELS Japan Co. Ltd</title>
+  <link rel="shortcut icon" href="/img/site-images/icon.ico" type="image/x-icon">
+  <!-- Google Font: Source Sans Pro -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="/admin/plugins/fontawesome-free/css/all.min.css">
+  
+  <!-- Ionicons -->
+  <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+  <!-- Tempusdominus Bootstrap 4 -->
+  <link rel="stylesheet" href="/admin/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css">
+  <!-- iCheck -->
+  <link rel="stylesheet" href="/admin/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.css">
+  <link rel="stylesheet" href="/admin/plugins/select2/css/select2.min.css">
+<link rel="stylesheet" href="/admin/plugins/toastr/toastr.min.css">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="/admin/dist/css/adminlte.min.css">
+    <!-- summernote -->
+  <link rel="stylesheet" href="/admin/plugins/summernote/summernote-bs4.min.css">
+  
+  <link rel="stylesheet" href="/admin/plugins/bootstrap4-duallistbox/bootstrap-duallistbox.min.css">
+  <!-- overlayScrollbars -->
+  <link rel="stylesheet" href="/admin/plugins/overlayScrollbars/css/OverlayScrollbars.min.css">
+
+  <link rel="stylesheet" href="/admin/dist/css/bootstrap-datepicker.min.css">
+
+  <!-- jQuery -->
+<script src="/admin/plugins/jquery/jquery.min.js"></script>
+<!-- jQuery UI 1.11.4 -->
+<script src="/admin/plugins/jquery-ui/jquery-ui.min.js"></script>
+
+</head>
+<body class="hold-transition sidebar-mini layout-fixed ">
+<div class="wrapper">
+  <%- include('./partials/_adminTopBar'); -%>
+
+  <%- include('./partials/_adminSidebar'); -%>
+      <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <br>
+        <% if(Request.session['flash_success_msg']){ %>
+            <section class="content">
+                    <div class="container-fluid">
+                    <div class="alert alert-success alert-dismissible">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        <h5><i class="icon fas fa-check"></i> Success.</h5>
+                        <%- get_flash(Request, 'flash_success_msg'); %>.
+                    </div>
+                </div>
+            </section>
+           
+        <% }else if(Request.session['flash_error_msg']){ %>
+            <section class="content">
+                <div class="container-fluid">
+                    <div class="alert alert-danger alert-dismissible">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        <h5><i class="icon fas fa-ban"></i> Error!</h5>
+                        <%- get_flash(Request, 'flash_error_msg'); %>.
+                    </div>
+            </div>
+            </section>
+        <% } %>
+
+        
+        <%- (typeof search_panel != 'undefined' && search_panel?.active) ?
+        include('./elements/search_panel') : ''; -%>

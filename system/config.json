@@ -1,0 +1,18 @@
+{
+    "directory": {
+        "controller": "app/controllers/",
+        "model": "app/models/",
+        "middleware": "app/middleware/",
+        "library": "app/libraries/",
+        "config": "config/",
+        "core": "core/",
+        "migration":"database/migrations/"
+    },
+    "files": {
+        "app_config": "app-config.json"
+    },
+    "system": {
+        "validator": "./request-validator",
+        "paginator": "./paginator"
+    }
+}

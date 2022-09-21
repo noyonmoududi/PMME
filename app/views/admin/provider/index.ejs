@@ -1,0 +1,102 @@
+<%- include('../layout/adminHeader'); -%>
+
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header d-flex p-0">
+            <h3 class="card-title p-3"><b>Provider List</b></h3>
+            <ul class="nav nav-pills ml-auto p-2">
+              <li class="nav-item">
+                <a class="btn btn-sm btn-info filterbutton" id="filterbutton"><i class="fa fa-solid fa-filter"></i> Filter</a>
+                <% if(has_permission(Request, ['provider.create'])){ %>
+                  <a class="btn btn-sm btn-success" href="/admin/provider/provider-create"><i class="fa fa-plus-circle"></i> Add New</a></li>
+                <% } %>
+              </ul>
+          </div>
+
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-bordered table-hover">
+                <thead>
+                  <tr>
+                    <th>SL</th>
+                    <th>Title</th>
+                    <th>logo</th>
+                    <th>Status</th>
+                    <th>Last Update</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% if(rows.length > 0) { 
+                    rows.forEach(row=>{%>
+                    <tr>
+                        <td><%- sl++ %></td>
+                        <td><%- row.title %></td>
+                        <td><%- row.logo %></td>
+                        <td> 
+                          <span class="<%- row.status == 1 ? 'badge bg-success' : 'badge bg-danger' %>">
+                          <%- row.status == 1 ? 'Active' : 'Inactive' %>
+                          </span>
+                        </td>
+                        <td><%= moment(row.updated_at).format('DD-MMM-YYYY hh:mm:ss') %></td>
+                        <td>
+                          <% if(has_permission(Request, ['provider.edit'])){ %>
+                          <a class="btn btn-warning btn-sm" href="/admin/provider/<%= row.id %>/provider-edit"><i class="fas fa-edit"></i></a>
+                          <% } %>
+                          <% if(has_permission(Request, ['provider.delete'])){ %>
+                          <form method="post" action="/admin/provider/<%= row.id %>/provider-delete" class="delete_form" style="display: inline;" >
+                              <button class="btn btn-danger btn-sm delete_btn"><i class="fa fa-trash"></i></button>
+                          </form>
+                          <% } %>
+                        </td>
+                    </tr>
+                <% }) }else{%>
+                    <tr>
+                        <td colspan="6" class="text-center">No Data Found!</td>
+                    </tr>
+                <% }%>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="card-footer clearfix">
+            <ul class="pagination pagination-sm m-0 float-right">
+              <li class="page-item"><%- pagination %></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%- include('../layout/adminFooter'); -%>
+
+<script>
+  $(function () {
+      $(document).on('click','.delete_btn',function (e) {
+          e.preventDefault();
+          var target = $(this).closest('form.delete_form');
+          $.confirm({
+                  icon: 'fas fa-warning',
+                  title: 'Confirm!',
+                  content: 'Do you want to delete this provider??',
+                  type: 'red',
+                  typeAnimated: true,
+                  buttons: {
+                      confirm: function () {
+                          target.submit();
+                      },
+                      cancel: function () {
+                      }
+                  }
+          });
+     
+      });
+
+  })
+</script>

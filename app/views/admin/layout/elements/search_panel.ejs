@@ -1,0 +1,102 @@
+<style>
+    .col {
+        opacity: 0;
+        height: 0;
+        overflow: hidden;
+        transition: all .5s ease-in-out;
+    }
+
+    .col.show {
+        opacity: 1;
+        height: 160px;
+        transition: all .5s ease-in-out;
+    }
+</style>
+<section class="content col" id="searchPanal">
+    <div class="container-fluid">
+    <div class="card card-primary" >
+    <div class="card-header">
+        <h3 class="card-title">Search Panel</h3>
+    </div>
+        <div class="card-body">
+            <form class="">
+                <div class="row">
+                <div class="col-3">
+                    Search</br>
+                    <input type="text" class="form-control" name="search" placeholder="Search..."
+                    value="<%= Request.query.search %>">
+                </div>
+                <% if(search_panel?.limit){%>
+                    <div class="col-2">
+                        Limit (per page)</br>
+                        <select class="form-control" name="limit">
+                            <option value="10" <%-(Request?.query?.limit==10)?'selected':''%>> 10</option>
+                            <option value="25" <%-(Request?.query?.limit==25)?'selected':''%>> 25</option>
+                            <option value="50" <%-(Request?.query?.limit==50)?'selected':''%>> 50</option>
+                            <option value="100" <%-(Request?.query?.limit==100)?'selected':''%>> 100</option>
+                            <option value="250" <%-(Request?.query?.limit==250)?'selected':''%>> 250</option>
+                            <option value="500" <%-(Request?.query?.limit==500)?'selected':''%>> 500</option>
+                            <option value="1000" <%-(Request?.query?.limit==1000)?'selected':''%>> 1,000</option>
+                            <option value="2000" <%-(Request?.query?.limit==2000)?'selected':''%>> 2,000</option>
+                            <option value="3000" <%-(Request?.query?.limit==3000)?'selected':''%>> 3,000</option>
+                            <option value="5000" <%-(Request?.query?.limit==5000)?'selected':''%>> 5,000</option>
+                            <option value="10000" <%-(Request?.query?.limit==10000)?'selected':''%>> 10,000</option>
+                            <option value="15000" <%-(Request?.query?.limit==15000)?'selected':''%>> 15,000</option>
+                        </select>
+                    </div>
+                <% }%>
+                <% if(search_panel?.data?.sort){%>
+                    <div class="col-md-2">
+                        Sort By</br>
+                        <select class="form-control" name="sort">
+                            <option value="">Select Sorting</option>
+                            <% for(let key in search_panel.data.sort){ %>
+                            <option <%-(Request?.query?.sort==key)?'selected':''%> value="<%- key %>">
+                                <%- search_panel.data.sort[key]; %>
+                            </option>
+                            <% } %>
+                        </select>
+                    </div>
+                    <% }%>
+                    
+                <% if(search_panel?.data?.status){%>
+                    <div class="col-md-2">
+                        Status</br>
+                        <select class="form-control" name="status">
+                            <option value="">Select Status</option>
+                            <% for(let k in search_panel.data.status){ %>
+                            <option <%-(Request?.query?.status==k)?'selected':''%> value="<%-k%>">
+                                <%- search_panel.data.status[k]; %>
+                            </option>
+                            <% } %>
+                        </select>
+                    </div>
+                    <% }%>
+                <div class="col-2">
+                    <br>
+                    <div class="btn-group" role="group">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                        <a class="btn btn-danger" href="/admin<%- Request.path %>">Reset</a>
+                      </div>
+                </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</section>
+<script>
+    $(function () {
+        var searchPanel = document.getElementById("searchPanal");   
+        $(document).on('click','.filterbutton',function (e) {
+            searchPanel.classList.toggle("show");
+        });
+        
+        //Url query params check
+        const urlSearchParams = new URLSearchParams(window.location.search);
+        const params = Object.fromEntries(urlSearchParams.entries());
+        if (params.hasOwnProperty('search') || params.hasOwnProperty('limit') || params.hasOwnProperty('sort')) {
+            searchPanel.classList.toggle("show");
+        } 
+    })
+</script>

@@ -1,0 +1,34 @@
+
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            
+        <div class="form-group">
+            <labelf for="title">Title</label>
+            <input class="form-control" id="title" name="title" type="text" placeholder="Type Title"
+                value="<%- (typeof old !='undefined')?old.title:''; %>">
+            <small class="text-danger">
+                <%= (typeof errors !='undefined' && errors.title)?errors.title:''; %>
+            </small>
+        </div>
+        
+        <div class="form-group">
+            <labelf for="symbol">Symbol</label>
+            <input class="form-control" id="symbol" name="symbol" type="text" placeholder="Type Symbol"
+                value="<%- (typeof old !='undefined')?old.symbol:''; %>">
+            <small class="text-danger">
+                <%= (typeof errors !='undefined' && errors.symbol)?errors.symbol:''; %>
+            </small>
+        </div>
+        
+        <div class="form-group">
+            <labelf for="payment_receive_address">Payment_receive_address</label>
+            <input class="form-control" id="payment_receive_address" name="payment_receive_address" type="text" placeholder="Type Payment_receive_address"
+                value="<%- (typeof old !='undefined')?old.payment_receive_address:''; %>">
+            <small class="text-danger">
+                <%= (typeof errors !='undefined' && errors.payment_receive_address)?errors.payment_receive_address:''; %>
+            </small>
+        </div>
+        
+        </div>
+    </div>
+    

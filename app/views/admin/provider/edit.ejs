@@ -1,0 +1,59 @@
+<%- include('../layout/adminHeader'); -%>
+
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header d-flex p-0">
+            <h3 class="card-title p-3"><b><%- (typeof page_title != 'undefined') ? page_title : ''; %></b></h3>
+            <ul class="nav nav-pills ml-auto p-2">
+              <li class="nav-item">
+                <a class="btn btn-sm btn-primary" href="/admin/provider"
+                  ><i class="fa fa-arrow-left"></i> Back</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div class="card-body">
+            <form action="/admin/provider/provider-edit" method="post" enctype="multipart/form-data" autocomplete="off">
+              <div class="row">
+                <div class="col-md-12">
+                    <input type="hidden" id="hidenid" name="hidenid" value="<%- (typeof old != 'undefined') ? old.id : ''; %>">
+                    <input type="hidden" id="previousFile" name="previousFile" value="<%- (typeof old != 'undefined') ? old.logo : ''; %>">
+                  <div class="form-group">
+                    <label for="title">Title</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="title"
+                      name="title"
+                      placeholder="Provider Title"
+                      value="<%- (typeof old != 'undefined') ? old.title : ''; %>"
+                    />
+                    <p class="text-danger">
+                      <%= (typeof errors != 'undefined' &&
+                      errors.title)?errors.title:''; %>
+                    </p>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="title">Provider Image</label>
+                    <input
+                      type="file"
+                      class="form-control"
+                      id="image"
+                      name="image"/>
+                  </div>
+                  <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%- include('../layout/adminFooter'); -%>

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin Log in</title>
+  <link rel="shortcut icon" href="/member/images/site-images/favicon.ico" type="image/x-icon">
+  <!-- Google Font: Source Sans Pro -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="/admin/plugins/fontawesome-free/css/all.min.css">
+  <!-- icheck bootstrap -->
+  <link rel="stylesheet" href="/admin/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="/admin/dist/css/adminlte.min.css">
+</head>
+<body class="hold-transition login-page">
+<div class="login-box">
+  <!-- /.login-logo -->
+  <div class="card card-outline card-warning">
+    <div class="card-header text-center">
+        <!-- <img src="/img/site-images/logo.png" alt="Logo" class="img-fluid" style="height: 80px;"> -->
+        <h2>Point Of Sale(MME)</h2>
+    </div>
+    <div class="card-body">
+      <p class="login-box-msg">Sign in to start your session</p>
+        <%if(Request.session['flash_error_msg']){%>
+            <div class="container-fluid">
+              <div class="alert alert-danger alert-dismissible">
+                  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                  <div style=" margin: auto;width: 101%;padding: 0px;"> <i class="icon fas fa-exclamation-triangle "></i><%- get_flash(Request,'flash_error_msg'); %></div>
+              </div>
+          </div>
+        <%}else if(Request.session['flash_success_msg']){%>
+          
+            <div class="container-fluid">
+              <div class="alert alert-success alert-dismissible">
+                  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                  <div style=" margin: auto;width: 101%;padding: 0px;"><i class="icon fas fa-check"></i><%- get_flash(Request,'flash_success_msg'); %></div>
+              </div>
+          </div>
+        <%}%>
+      <form action="/admin/login" method="post">
+        <input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response">
+        <input type="hidden" name="action" value="validate_captcha">  
+        <div class="row">
+        <div class="input-group mb-2">
+          <input type="email" class="form-control" id="email" name="email" placeholder="Email">
+          <div class="input-group-append">
+            <div class="input-group-text">
+              <span class="fas fa-envelope"></span>
+            </div>
+          </div>
+        </div>
+    </div>
+        <p class="text-danger"><%= (typeof errors != 'undefined' && errors.email)?errors.email:''; %></p>
+        <div class="row">
+        <div class="input-group mb-2">
+          <input type="password" class="form-control" id="password" name="password" placeholder="Password">
+          <div class="input-group-append">
+            <div class="input-group-text">
+              <span class="fas fa-lock"></span>
+            </div>
+          </div>
+        </div>
+        <p class="text-danger"><%= (typeof errors != 'undefined' && errors.password)?errors.password:''; %></p>
+    </div>
+        <div class="row">
+          <div class="col-8">
+            <a href="/admin/forgot-password">I forgot my password</a>
+            <!-- <div class="icheck-primary">
+              <input type="checkbox" id="remember">
+              <label for="remember">
+                Remember Me
+              </label>
+            </div> -->
+          </div>
+          <!-- /.col -->
+          <div class="col-4">
+            <button type="submit" class="btn btn-success btn-block">LOG IN</button>
+          </div>
+          <!-- /.col -->
+        </div>
+      </form>
+    </div>
+    <!-- /.card-body -->
+  </div>
+  <!-- /.card -->
+</div>
+<!-- /.login-box -->
+
+<!-- jQuery -->
+<script src="/admin/plugins/jquery/jquery.min.js"></script>
+<!-- Bootstrap 4 -->
+<script src="/admin/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- AdminLTE App -->
+<script src="/admin/dist/js/adminlte.min.js"></script>
+
+<script src="https://www.google.com/recaptcha/api.js?render=<%- process.env.reCAPTCHA_SITE_KEY %>"></script>
+<script>
+    grecaptcha.ready(function() {
+    var reCAPTCHA_SITE_KEY= '<%= process.env.reCAPTCHA_SITE_KEY %>';
+    // do request for recaptcha token
+    // response is promise with passed token
+        grecaptcha.execute(reCAPTCHA_SITE_KEY, {action:'validate_captcha'})
+                  .then(function(token) {
+            // add token value to form
+            document.getElementById('g-recaptcha-response').value = token;
+        });
+    });
+</script>
+
+</body>
+</html>

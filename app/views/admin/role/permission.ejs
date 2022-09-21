@@ -1,0 +1,59 @@
+<%- include('../layout/adminHeader'); -%>
+<section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="card">
+            <div class="card-header d-flex p-0">
+              <h3 class="card-title p-3"><b><%- (typeof roleData !='undefined')?roleData.name:''; %> Role Has Below Permissions</b></h3>
+              <ul class="nav nav-pills ml-auto p-2">
+                <li class="nav-item">
+                  <a class="btn btn-sm btn-primary" href="/admin/settings/roles"><i class="fa fa-arrow-left"></i> Back</a></li>
+                </ul>
+            </div>
+  
+            <div class="card-body">
+                <form action="/admin/settings/roles/<%- (typeof roleData !='undefined')?roleData.id:''; %>/permissions" method="post" autocomplete="off">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label>List of all permissions</label>
+
+                                    <select class="duallistbox" id="permission_id" name="permission_id" multiple="multiple">
+
+                                        <% if( typeof permissionData != 'undefined' && permissionData.length > 0) {
+                                            permissionData.forEach(row=>{ %>
+                                                <option value="<%- row.id %>" 
+                                                    <% if( typeof old != 'undefined' && old.length > 0) {
+                                                            old.forEach(od=>{ %>
+                                                                <%- (od.permission_id == row.id)?'selected':'ok'; %> 
+                                                        <% }) %>
+                                                    <% } else{ %>
+                                                        ' '
+                                                    <% } %>
+                                                    >
+
+                                                    <%- row.name %>
+                                                </option>
+                                        <% }) %>
+                                        <% } %>
+                                    </select>
+
+                                <p class="text-danger"><%= (typeof errors != 'undefined' && errors.permission_id)?errors.permission_id:''; %></p>
+                            </div>
+                            
+                        </div>
+                        <button type="submit" class="btn btn-success"><i class="fas fa-refresh"></i> Sync Permissions</button>
+                        
+                    </div>
+                </form>
+            </div>
+  
+            
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+<%- include('../layout/adminFooter'); -%>

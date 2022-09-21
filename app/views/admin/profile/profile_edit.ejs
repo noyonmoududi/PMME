@@ -1,0 +1,234 @@
+<%- include('../layout/adminHeader'); -%>
+<section class="content">
+  <div class="container-fluid">
+    <div class="col-md-12">
+      <div class="card card-success card-outline">
+        <div class="card-header d-flex p-0">
+          <h3 class="card-title p-3"><b>Profile Edit</b></h3>
+          <ul class="nav nav-pills ml-auto p-2">
+            <li class="nav-item">
+              <a class="btn btn-sm btn-primary" href="/admin/"
+                ><i class="fa fa-arrow-left"></i> Back</a
+              >
+            </li>
+          </ul>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-12 col-sm-12">
+              <div class="card card-primary card-outline card-tabs">
+                <div class="card-header p-0 pt-1 border-bottom-0">
+                  <ul
+                    class="nav nav-tabs"
+                    id="custom-tabs-three-tab"
+                    role="tablist"
+                  >
+                    <li class="nav-item">
+                      <a
+                        class="nav-link <%= (typeof tab_index != 'undefined' && tab_index=='basic')?'active':''; %>"
+                        id="custom-tabs-three-home-tab"
+                        data-toggle="pill"
+                        href="#custom-tabs-three-home"
+                        role="tab"
+                        aria-controls="custom-tabs-three-home"
+                        aria-selected="false"
+                        data-id="basic"
+                        >Basic Info</a
+                      >
+                    </li>
+                    <li class="nav-item">
+                      <a
+                        class="nav-link <%= (typeof tab_index != 'undefined' && tab_index=='security')?'active':''; %>"
+                        id="custom-tabs-three-profile-tab"
+                        data-toggle="pill"
+                        href="#custom-tabs-three-profile"
+                        role="tab"
+                        aria-controls="custom-tabs-three-profile"
+                        aria-selected="false"
+                        data-id="security"
+                        >Security</a
+                      >
+                    </li>
+                    <li class="nav-item">
+                      <a
+                        class="nav-link <%= (typeof tab_index != 'undefined' && tab_index=='imageUpload')?'active':''; %>"
+                        id="custom-tabs-three-messages-tab"
+                        data-toggle="pill"
+                        href="#custom-tabs-three-messages"
+                        role="tab"
+                        aria-controls="custom-tabs-three-messages"
+                        aria-selected="true"
+                        data-id="imageUpload"
+                        >Profile Picture</a
+                      >
+                    </li>
+                  </ul>
+                </div>
+                <div class="card-body">
+                  <div class="tab-content" id="custom-tabs-three-tabContent">
+                    <div
+                      class="tab-pane fade <%= (typeof tab_index != 'undefined' && tab_index=='basic')?'active show':''; %>"
+                      id="custom-tabs-three-home"
+                      role="tabpanel"
+                      aria-labelledby="custom-tabs-three-home-tab"
+                    >
+                    <form action="/admin/profile/basic-info_update" method="post">
+                        <div class="row">     
+                            <div class="col-sm-4">
+                                <div class="form-group has-success">
+                                    <label for="name">Full Name</label>
+                                    <input type="text" class="form-control valid" placeholder="Full name" name="name" id="name" value="<%- (typeof userData !='undefined')?userData.name:''; %>" required>
+                                    <p class="text-danger"><%= (typeof errors != 'undefined' && errors.name)?errors.name:''; %></p>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    <label for="email">Email</label>
+                                    <input type="email" class="form-control" placeholder="Email" disabled="disabled" id="email" value="<%- (typeof userData !='undefined')?userData.email:''; %>">
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    <label for="phone">Phone</label>
+                                    <input type="text" class="form-control numeric" placeholder="Phone" name="phone" id="phone" value="<%- (typeof userData !='undefined')?userData.phone:''; %>" required>
+                                    <p class="text-danger"><%= (typeof errors != 'undefined' && errors.phone)?errors.phone:''; %></p>
+                                </div>
+                            </div>
+                    
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <button type="submit" class="btn btn-primary btn-flat">Update</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    </div>
+                    <div
+                      class="tab-pane fade <%= (typeof tab_index != 'undefined' && tab_index=='security')?'active show':''; %>"
+                      id="custom-tabs-three-profile"
+                      role="tabpanel"
+                      aria-labelledby="custom-tabs-three-profile-tab"
+                    >
+                    <form action="/admin/profile/password_update" method="post">
+                        <div class="row">     
+                            <div class="col-sm-4">
+                                
+                                <div class="form-group">
+                                    <label>New Password</label>
+                                    <div class="input-group">
+                                    <input type="password" class="form-control" placeholder="New Password" name="password" id="password" required>
+                                    <div class="input-group-append">
+                                    <span class="input-group-text"><i class="fas fa-eye-slash" id="showPassword"></i></span>
+                                    </div>
+                                    </div>
+                                    <p class="text-danger"><%= (typeof errors != 'undefined' && errors.password)?errors.password:''; %></p>
+                                </div>
+                              
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    <label>Retype New Password</label>
+                                    <div class="input-group">
+                                    <input type="password" class="form-control" placeholder="Retype New Password" name="retypePassword" id="retypePassword" required>
+                                    <div class="input-group-append">
+                                    <span class="input-group-text"><i class="fas fa-eye-slash" id="showReTypePassword"></i></span>
+                                    </div>
+                                    </div>
+                                    <p class="text-danger"><%= (typeof errors != 'undefined' && errors.retypePassword)?errors.retypePassword:''; %></p>
+                                </div>
+                            </div>
+                    
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <button type="submit" class="btn btn-primary btn-flat">Update</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    </div>
+                    <div
+                      class="tab-pane fade <%= (typeof tab_index != 'undefined' && tab_index=='imageUpload')?'active show':''; %>"
+                      id="custom-tabs-three-messages"
+                      role="tabpanel"
+                      aria-labelledby="custom-tabs-three-messages-tab"
+                    >
+                    <form action="/admin/profile/profile_photo_update" method="post" enctype="multipart/form-data">
+                        <input type="hidden" name="oldProfileImage" value="<%- (typeof userData !='undefined')?userData.photo:''; %>">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="thumb_img">Photo:</label>
+                                    <input type="file" class="form-control" id="profile_image" name="profile_image">
+                                    <p class="text-warning">Max file size 4 MB</p>
+                                </div>
+                                <div class="form-group">
+                                    <button type="submit" class="btn btn-primary btn-flat">Update</button>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <label for="thumb_img">Uploaded Photo:</label>
+                                <div class="form-group">
+                                    <img src="/file_storage/user-photos/<%- (typeof userData !='undefined')?userData.photo:''; %>" alt="User Photo" width="150px" height="150px" >
+                                </div>
+                               
+                            </div>
+                        </div>
+                    
+                  
+                    </form>
+                    </div>
+                  
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%- include('../layout/adminFooter'); -%>
+
+<script>
+      $(document).ready(function() {
+        $(document).on('click','#showPassword',function(){
+            let password = document.querySelector("#password");
+            // toggle the type attribute
+            let type = password.getAttribute("type") === "password" ? "text" : "password";
+            password.setAttribute("type", type);
+            var hasactive = $(this).hasClass('fa-eye-slash');
+            if (hasactive) {
+                $(this).removeClass("fa-eye-slash");
+                $(this).addClass("fa-eye");
+            }else{
+                $(this).removeClass("fa-eye");
+                $(this).addClass("fa-eye-slash");
+            }
+        });
+
+        $(document).on('click','#showReTypePassword',function(){
+            let password = document.querySelector("#retypePassword");
+            // toggle the type attribute
+            let type = password.getAttribute("type") === "password" ? "text" : "password";
+            password.setAttribute("type", type);
+            var hasactive = $(this).hasClass('fa-eye-slash');
+            if (hasactive) {
+                $(this).removeClass("fa-eye-slash");
+                $(this).addClass("fa-eye");
+            }else{
+                $(this).removeClass("fa-eye");
+                $(this).addClass("fa-eye-slash");
+            }
+        });
+
+        $(document).on('click','#custom-tabs-three-profile-tab, #custom-tabs-three-messages-tab, #custom-tabs-three-home-tab',function (e) {
+            var tabValue = $(this).data("id");
+            const url = new URL(window.location);
+            url.searchParams.set('tab', tabValue);
+            window.history.pushState(null, '', url.toString());
+        });
+
+    });
+</script>

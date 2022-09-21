@@ -1,0 +1,129 @@
+<%- include('../layout/adminHeader'); -%>
+
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header d-flex p-0">
+            <h3 class="card-title p-3"><b><%- (typeof page_title != 'undefined') ? page_title : ''; %></b></h3>
+            <ul class="nav nav-pills ml-auto p-2">
+              <li class="nav-item">
+                <a class="btn btn-sm btn-primary" href="/admin/retirements"
+                  ><i class="fa fa-arrow-left"></i> Back</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div class="card-body">
+            <form action="/admin/retirements/retirements-project-edit" method="post">
+                <input type="hidden" id="retirementProjectId" name="retirementProjectId" value="<%- (typeof old != 'undefined') ? old.id : ''; %>"> 
+              <div class="row">
+                <div class="col-md-6">
+                  
+                  <div class="form-group">
+                    <label for="title">Project Name</label>
+                    <% if(typeof allProject != 'undefined') { %>
+                        <select class="form-control select2" name="project_id">
+                            <option value="">--Select Project--</option>
+                            <% if(allProject.length > 0) { %>
+                            <% for(let key in allProject){ %>
+                                <option value="<%- allProject[key].id %>" <%- (typeof old != 'undefined' && old?.project_id == allProject[key].id) ? 'selected' : ''; %> >
+                                    <%- allProject[key].project_name %>
+                                </option>
+                            <% } %>
+                            <% } %>
+                        </select>
+                    <% }else{ %>
+                        <p class="text-danger">Data not Found!.</p>
+                   <%  } %>
+                    <p class="text-danger">
+                      <%= (typeof errors != 'undefined' &&
+                      errors.project_id)?errors.project_id:''; %>
+                    </p>
+                  </div>
+ 
+                  <div class="form-group">
+                    <label for="title">Vintage</label>
+                    <input type="text" class="form-control" id="vintage"  name="vintage" placeholder="vintage" value="<%- (typeof old != 'undefined') ? old.vintage : ''; %>" />
+                    <p class="text-danger">
+                      <%= (typeof errors != 'undefined' &&
+                      errors.vintage)?errors.vintage:''; %>
+                    </p>
+                  </div>
+                 
+                  <div class="form-group">
+                    <label for="title">Retirement Date</label>
+                    <input type="text" class="form-control" id="date" name="retirement_date" placeholder="Retirement Date" value="<%- (typeof old != 'undefined') ? old.retirement_date : ''; %>"
+                    />
+                    <p class="text-danger">
+                      <%= (typeof errors != 'undefined' &&
+                      errors.retirement_date)?errors.retirement_date:''; %>
+                    </p>
+                  </div>
+                  <div class="form-group">
+                    <label for="title">Serial Number</label>
+                    <input type="text" class="form-control" id="serial_number" name="serial_number" placeholder="Serial Number" value="<%- (typeof old != 'undefined') ? old.serial_number : ''; %>"
+                    />
+                    <p class="text-danger">
+                      <%= (typeof errors != 'undefined' &&
+                      errors.serial_number)?errors.serial_number:''; %>
+                    </p>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                   
+                      <div class="form-group">
+                        <label for="title">Sale Unit</label>
+                        <% if(typeof saleUnits != 'undefined') { %>
+                            <select class="form-control" name="sale_unit_id" required>
+                                <option value="">--Select Sale Unit--</option>
+                                <% if(saleUnits.length > 0) { %>
+                                    <% for(let key in saleUnits){ %>
+                                        <option value="<%- saleUnits[key].id %>" <%- (typeof old != 'undefined' && old?.credit_sale_unit == saleUnits[key].id) ? 'selected' : ''; %> >
+                                            <%- saleUnits[key].symbol %>
+                                        </option>
+                                    <% } %>
+                                <% } %>
+                            </select>
+                        <% }else{ %>
+                            <p class="text-danger">Data not Found!.</p>
+                       <%  } %>
+                        <p class="text-danger">
+                          <%= (typeof errors != 'undefined' &&
+                          errors.sale_unit_id)?errors.sale_unit_id:''; %>
+                        </p>
+                      </div>
+                      <div class="form-group">
+                        <label for="title">Sale Unit USD</label>
+                        <input type="number" class="form-control" id="sale_unit_usd" name="sale_unit_usd" placeholder="Usd Value"  value="<%- (typeof old != 'undefined') ? old.per_unit_price_usd : ''; %>"/>
+                        <p class="text-danger">
+                          <%= (typeof errors != 'undefined' &&
+                          errors.sale_unit_usd)?errors.sale_unit_usd:''; %>
+                        </p>
+                      </div>
+                      <div class="form-group">
+                        <label for="title">Remarks</label>
+                        <input type="text" class="form-control"id="remarks"  name="remarks" placeholder="Remarks" value="<%- (typeof old != 'undefined') ? old.remarks : ''; %>" />
+                      </div>
+                      <div class="form-group">
+                        <label for="title">Registry Url</label>
+                        <input type="text" class="form-control"id="registry_url"  name="registry_url" placeholder="Registry Url" value="<%- (typeof old != 'undefined') ? old.retirement_project_url : ''; %>" />
+                        <p class="text-danger">
+                          <%= (typeof errors != 'undefined' &&
+                          errors.registry_url)?errors.registry_url:''; %>
+                        </p>
+                      </div>
+                    
+                  </div>
+                  <button type="submit" class="btn btn-primary">Submit</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%- include('../layout/adminFooter'); -%>

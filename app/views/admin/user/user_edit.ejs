@@ -1,0 +1,50 @@
+<%- include('../layout/adminHeader'); -%>
+
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header d-flex p-0">
+            <h3 class="card-title p-3"><b>User Edit</b></h3>
+            <ul class="nav nav-pills ml-auto p-2">
+              <li class="nav-item">
+                <a class="btn btn-sm btn-primary" href="/admin/users"><i class="fa fa-arrow-left"></i> Back</a></li>
+              </ul>
+          </div>
+
+          
+            <div class="card-body">
+                <form action="/admin/user-edit" method="post" autocomplete="off">
+                    <input type="hidden" name="hidden_id" id="hidden_id" value="<%- (typeof old != 'undefined') ? old.id : ''; %>">
+                    <div class="row">
+                        <div class="col-md-3"></div>
+                        <div class="col-md-6">
+                                <div class="form-group">
+                                <label for="name">Full Name</label>
+                                <input type="text" class="form-control" id="name" name="name" value="<%- (typeof old != 'undefined') ? old.name : ''; %>" placeholder="Enter Full Name">
+                                <p class="text-danger"><%= (typeof errors != 'undefined' && errors.name)?errors.name:''; %></p>
+                                </div>
+                                
+                                <div class="form-group">
+                                <label for="email">Email</label>
+                                <input type="email" class="form-control" id="email" name="email" value="<%- (typeof old != 'undefined') ? old.email : ''; %>" placeholder="Enter email">
+                                <p class="text-danger"><%= (typeof errors != 'undefined' && errors.email)?errors.email:''; %></p>
+                                </div>
+                                <div class="form-group">
+                                <label for="phone">Phone</label>
+                                <input type="text" class="form-control" id="phone" name="phone" value="<%- (typeof old != 'undefined') ? old.phone : ''; %>" placeholder="Enter phone">
+                                </div>
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                                </div>
+                        </div>
+                        <div class="col-md-3"></div>
+                    </div>
+                </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%- include('../layout/adminFooter'); -%>

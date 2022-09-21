@@ -1,0 +1,122 @@
+<%- include('../layout/adminHeader'); -%>
+
+
+<section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="card">
+            <div class="card-header d-flex p-0">
+              <h3 class="card-title p-3"><b>Acl</b></h3>
+              <ul class="nav nav-pills ml-auto p-2">
+                <li class="nav-item">
+                 <a class="btn btn-sm btn-info filterbutton" id="filterbutton"><i class="fa fa-solid fa-filter"></i> Filter</a>
+              </ul>
+            </div>
+  
+            <div class="card-body">
+              <div class="table-responsive">
+              <table class="table table-bordered table-hover">
+                <thead>
+                  <tr>
+                    <th>SL</th>
+                    <th>User</th>
+                    <th>Roles</th>
+                    <th>Permissions</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+
+                  <% if(rows.length > 0) { 
+                    rows.forEach(row=>{%>
+                    <tr>
+                        <td><%- sl++ %></td>
+                        <td><%- row.name %></td>
+                        <td><%- row.assign_roles %></td>
+                        <td><a class="btn btn-warning btn-sm check-permission" data-id="<%= row.id %>"><i class="fa fa-eye"></i>Check Permission</a></td>
+                        <td>
+                          <% if(has_permission(Request, ['acl.create'])){ %>
+                          <a class="btn btn-info btn-sm" href="/admin/settings/acl/create?id=<%= row.id %>"><i class="fa fa-share-alt"></i></a>
+                          <% } %>
+                        </td>
+                    </tr>
+                <% }) }else{%>
+                    <tr>
+                        <td colspan="6" class="text-center">No Data Found!</td>
+                    </tr>
+                <% }%>
+
+                </tbody>
+              </table>
+              </div>
+            </div>
+  
+            <div class="card-footer clearfix">
+              <ul class="pagination pagination-sm m-0 float-right">
+                <li class="page-item"><%- pagination %></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+
+<%- include('../layout/adminFooter'); -%>
+<script>
+
+  $(document).ready(function () {
+      $('.check-permission').on('click',function () {
+          let user_id = $(this).data("id");
+          let checkUrl = '/admin/settings/direct-permissions-check/'+user_id;
+          $.alert({
+              title: 'Permission list',
+              type: 'green',
+              draggable: true,
+              columnClass: 'col-md-12',
+              content: function () {
+                  var self = this;
+                  return $.ajax({
+                      url: checkUrl,
+                      dataType: 'json',
+                      method: 'get'
+                  }).done(function (response) {
+                      var tableRowd ='';
+                      var tableRowR ='';
+                        if (response.directPermissions.length > 0 || response.rolePermissions.length > 0) {
+                          response.directPermissions.forEach(element => {
+                            tableRowd += `<tr><button type="button" class="btn btn-block btn-default btn-sm">${element.permission_name}</button></tr>`;
+                        });
+                        response.rolePermissions.forEach(role => {
+                          role.forEach(element2 => {
+                              tableRowR += `<tr><button type="button" class="btn btn-block btn-default btn-sm">${element2.permission_name}</button></tr>`;
+                          });
+                        });
+                        self.setContent(`<div class="row">
+                                            <div class="col-md-6">
+                                              <p>Role Permission List</p>
+                                                <table class="table table-hover">
+                                                    ${tableRowR}
+                                                </table>
+                                            </div>
+                                            <div class="col-md-6">
+                                              <p>Direct Permission List</p>
+                                                <table class="table table-hover">
+                                                    ${tableRowd}
+                                                </table>
+                                            </div>
+                                        </div>`)
+                      } else {
+                        self.setContent('No Data Found!.');
+                      }
+                     
+                  }).fail(function(){
+                      self.setContent('Something went wrong.');
+                  });
+              }
+          });
+      })
+  })
+</script>

@@ -1,0 +1,122 @@
+</div>
+<!-- /.content-wrapper -->
+<footer class="main-footer">
+  <strong>Copyright &copy; <%= new Date().getFullYear();%>  <a href="#">日本ゼルス株式会社</a>.</strong>
+  All rights reserved.
+  <div class="float-right d-none d-sm-inline-block">
+    <b>v</b> 1.0.0
+  </div>
+</footer>
+
+</div>
+<!-- ./wrapper -->
+
+
+<!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
+<script>
+$.widget.bridge('uibutton', $.ui.button)
+</script>
+<!-- Bootstrap 4 -->
+<script src="/admin/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/admin/plugins/daterangepicker/daterangepicker.js"></script>
+
+<script src="/admin/plugins/select2/js/select2.full.min.js"></script>
+<!-- jQuery Knob Chart -->
+<script src="/admin/plugins/jquery-knob/jquery.knob.min.js"></script>
+
+<script src="/admin/plugins/bootstrap4-duallistbox/jquery.bootstrap-duallistbox.min.js"></script>
+<!-- daterangepicker -->
+<script src="/admin/plugins/moment/moment.min.js"></script>
+<script src="/admin/plugins/inputmask/jquery.inputmask.min.js"></script>
+<!-- Tempusdominus Bootstrap 4 -->
+<script src="/admin/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
+<!-- Summernote -->
+<script src="/admin/plugins/summernote/summernote-bs4.min.js"></script>
+<!-- overlayScrollbars -->
+<script src="/admin/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.js"></script>
+
+<script src="/admin/plugins/toastr/toastr.min.js"></script>
+
+<script src="/admin/plugins/jquery-validation/jquery.validate.min.js"></script>
+<script src="/admin/plugins/jquery-validation/additional-methods.min.js"></script>
+<!-- AdminLTE App -->
+<script src="/admin/dist/js/adminlte.js"></script>
+<script  src="/admin/dist/js/bootstrap-datepicker.min.js"></script>
+<script>
+  $(function () {
+    //Initialize Select2 Elements
+      $('.select2').select2();
+    // Summernote
+    $('#summernote').summernote({
+      height: 200, 
+    })
+    $('.summernote').summernote({
+      height: 100, 
+    })
+    $('[data-mask]').inputmask();
+    //Bootstrap Duallistbox
+    $('.duallistbox').bootstrapDualListbox({selectorMinimalHeight:300});
+  })
+</script>
+  <%if(Request.session['flash_toastr_error']){%>
+    <script>
+        //var message = '<%= Request.session["flash_toastr_error"] %>';
+        var message = `<%= get_flash(Request,'flash_toastr_error'); %>`;
+        toastr.options.positionClass = 'toast-bottom-right';
+        toastr.error(message);
+    </script>
+
+  <%} else if(Request.session['flash_toastr_success']){%>
+    <script>
+       var message = `<%= get_flash(Request,'flash_toastr_success'); %>`;
+       // var message = '<%= Request.session["flash_toastr_success"] %>';
+        toastr.options.positionClass = 'toast-bottom-right';
+        toastr.success(message);
+    </script>
+   
+  <%} else if(Request.session['flash_toastr_warning']){%>
+    <script>
+        //var message = '<%= Request.session["flash_toastr_warning"] %>';
+        var message = `<%= get_flash(Request,'flash_toastr_warning'); %>`;
+        toastr.options.positionClass = 'toast-bottom-right';
+        toastr.warning(message);
+    </script>
+  <%}%>
+
+  
+  <script>
+    $(document).ready(function() {
+       $(document).on('click','#expand_bar',function(){
+
+        const myAnchor = document.getElementById("topbarImg"); 
+        let hasStyle = myAnchor.getAttribute("style");
+        let hasclass = myAnchor.classList.contains('click');
+          if (hasStyle && hasclass) {
+            $("#topbarImg").removeAttr("style");
+            document.getElementById("topbarImg").style.marginLeft = "90px";
+            document.getElementById("topbarImg").style.maxHeight = "25px";
+            myAnchor.classList.remove("click");
+          } else if (hasStyle) {
+            $("#topbarImg").removeAttr("style");
+            myAnchor.classList.add("click");
+            document.getElementById("topbarImg").style.maxHeight = "25px";
+          }
+       });
+       
+       $('#date').datepicker({
+            format: "yyyy-mm-dd",
+            language: 'ja',
+        });
+        $('#yearMonth').datepicker({
+            format: "yyyy-mm",
+            viewMode: "months", 
+            minViewMode: "months",
+            language: 'ja',
+        });
+        
+    });
+</script>
+</script>
+</body>
+</html>

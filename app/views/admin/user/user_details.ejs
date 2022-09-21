@@ -1,0 +1,54 @@
+<%- include('../layout/adminHeader'); -%>
+
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header d-flex p-0">
+            <h3 class="card-title p-3"><b>User Details</b></h3>
+            <ul class="nav nav-pills ml-auto p-2">
+              <li class="nav-item">
+                <a class="btn btn-sm btn-primary" href="/admin/users"><i class="fa fa-arrow-left"></i> Back</a></li>
+              </ul>
+          </div>
+
+          
+            <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                            <label for="name">Full Name</label>
+                            <p><%- (typeof userData !='undefined')?userData.name:''; %></p>
+                            
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                                <div class="form-group">
+                                <label for="email">Email</label>
+                                <p><%- (typeof userData !='undefined')?userData.email:''; %></p>
+                                </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="phone">Phone</label>
+                                <p><%- (typeof userData !='undefined')?userData.phone:''; %></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                            <label for="name">Last Update: <%- (typeof userData !='undefined')?moment(userData.updated_at).format('DD-MMM-YYYY hh:mm:ss'):''; %></label>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+                
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%- include('../layout/adminFooter'); -%>

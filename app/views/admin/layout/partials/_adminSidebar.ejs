@@ -1,0 +1,123 @@
+<!-- Main Sidebar Container -->
+<aside class="main-sidebar sidebar-light-primary elevation-4">
+    <!-- Brand Logo -->
+    <!-- <img src="/img/site-images/logo-bg.png" alt="Logo" width="100" class="img-fluid log-img" style="padding: 5px; margin-left: 60px;"> -->
+    <a href="/admin/" class="brand-link">
+      <img src="/img/site-images/logo2.png" alt="Logo" data-click="0" class="img-fluid log-img" id="topbarImg" style="margin-left: 90px; max-height: 25px;">
+      <span class="brand-text font-weight-light"></span>
+    </a>
+    <!-- Sidebar -->
+    <div class="sidebar">
+    
+      <!-- Sidebar Menu -->
+      <nav class="mt-2">
+        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+          <li class="nav-item">
+            <a href="/admin/dashboard" class="nav-link <%- (Request.path == '/dashboard' || Request.path == '/') ? 'active' : '' %>">
+              <i class="nav-icon fas fa-tachometer-alt"></i>
+              <p>
+                Dashboard
+              </p>
+            </a>
+          </li>
+          <% if(has_permission(Request, ['provider.list'])){ %>
+            <li class="nav-item">
+              <a href="/admin/provider" class="nav-link <%- (Request.path == '/provider' || Request.path == '/provider-create') ? 'active' : '' %>">
+                <i class="nav-icon fas fa-book"></i>
+                <p>Providers</p>
+              </a>
+            </li>
+            <% } %>
+            <% if(has_permission(Request, ['project.list'])){ %>
+              <li class="nav-item">
+                <a href="/admin/project" class="nav-link <%- (Request.path == '/project' || Request.path == '/project-create') ? 'active' : '' %>">
+                  <i class="nav-icon fas fa-book"></i>
+                  <p>Projects</p>
+                </a>
+              </li>
+              <% } %>
+              <% if(has_permission(Request, ['retirement.project.list'])){ %>
+                <li class="nav-item">
+                  <a href="/admin/retirements" class="nav-link <%- (Request.path == '/retirements' || Request.path == '/retirements-create') ? 'active' : '' %>">
+                    <i class="nav-icon fas fa-book"></i>
+                    <p>Retirements</p>
+                  </a>
+                </li>
+                <% } %>
+          <% if(has_permission(Request, ['sale-unit.list'])){ %>
+            <li class="nav-item">
+              <a href="/admin/sales-units" class="nav-link <%- (Request.path == '/sales-units' || Request.path == '/sales-units/create') ? 'active' : '' %>">
+                <i class="nav-icon fas fa-book"></i>
+                <p>Sales Units</p>
+              </a>
+            </li>
+            <% } %>
+            <% if(has_permission(Request, ['currency.list'])){ %>
+              <li class="nav-item">
+                <a href="/admin/currencies" class="nav-link <%- (Request.path == '/currencies' || Request.path == '/currencies/create') ? 'active' : '' %>">
+                  <i class="nav-icon fas fa-book"></i>
+                  <p>Currency</p>
+                </a>
+              </li>
+            <% } %>
+            <% if(has_permission(Request, ['adminpanel.order.list'])){ %>
+              <li class="nav-item">
+                <a href="/admin/orders" class="nav-link <%- (Request.path == '/orders') ? 'active' : '' %>">
+                  <i class="nav-icon fas fa-book"></i>
+                  <p>Orders</p>
+                </a>
+              </li>
+              <% } %>
+
+          <% if(has_permission(Request, ['users.list'])){ %>
+          <li class="nav-item">
+            <a href="/admin/users" class="nav-link <%- (Request.path == '/users' || Request.path == '/user-create') ? 'active' : '' %>">
+              <i class="nav-icon fas fa-user"></i>
+              <p>Users</p>
+            </a>
+          </li>
+          <% } %>
+
+          <% if(has_permission(Request, ['system.log.list','acl.list','roles.list'])){ %>
+            <li class="nav-item <%- (Request.path == '/settings/roles' || Request.path == '/logs/user' ||  Request.path == '/settings/roles/permissions' || Request.path == '/settings/acl' || Request.path == '/settings/acl/create' || Request.path == '/settings/create-roles')? 'menu-is-opening menu-open' : '' %>">
+              <a href="#" class="nav-link">
+                <i class="nav-icon fas fa-cogs"></i>
+                <p>
+                  Settings
+                  <i class="fas fa-angle-left right"></i>
+                </p>
+              </a>
+              <ul class="nav nav-treeview">
+                <% if(has_permission(Request, ['acl.list'])){ %>
+                <li class="nav-item">
+                  <a href="/admin/settings/acl" class="nav-link <%- (Request.path == '/settings/acl' || Request.path == '/settings/acl/create') ? 'active' : '' %>">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>ACL</p>
+                  </a>
+                </li>
+                <% } %>
+                <% if(has_permission(Request, ['roles.list'])){ %>
+                <li class="nav-item">
+                  <a href="/admin/settings/roles" class="nav-link <%- (Request.path == '/settings/roles' || Request.path == '/settings/roles/permissions' || Request.path == '/settings/create-roles') ? 'active' : '' %>">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>Roles</p>
+                  </a>
+                </li>
+                <% } %>
+                <% if(has_permission(Request, ['system.log.list'])){ %>
+                  <li class="nav-item">
+                    <a href="/admin/logs/user" class="nav-link <%- (Request.path == '/logs/user') ? 'active' : '' %>">
+                      <i class="far fa-circle nav-icon"></i>
+                      <p>User Log</p>
+                    </a>
+                  </li>
+                <% } %>
+              </ul>
+            </li>
+          <% } %>
+        </ul>
+      </nav>
+      <!-- /.sidebar-menu -->
+    </div>
+    <!-- /.sidebar -->
+  </aside>

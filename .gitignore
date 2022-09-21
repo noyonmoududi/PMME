@@ -1,0 +1,10 @@
+/.idea
+/node_modules
+/.env
+/package-lock.json
+/console.log
+/update_server.sh
+
+/logs/*
+!/logs/index.html
+
