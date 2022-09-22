@@ -22,7 +22,6 @@ module.exports = class UserModel extends Controller {
             if(search) query_builder.where((query)=>{
                 query.where('name','like',`%${search}%`)
                 query.orWhere('email','like',`%${search}%`)
-                query.orWhere('type','like',`%${search}%`)
                 query.orWhere('status','like',`%${search}%`)
             });
             if (sort) {
