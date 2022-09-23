@@ -53,7 +53,7 @@
                         </td>
                         <td>
                           <% if(has_permission(Request, ['product.stock.add'])){ %>
-                            <a class="btn btn-success btn-sm" href="/admin/products/<%= row.id %>/product-edit"><i class="fas fa-plus-circle"></i> ADD</a>
+                            <a class="btn btn-success btn-sm add-stock" data-id="<%= row.id %>" data-code="<%= row.identity_code %>"><i class="fas fa-plus-circle"></i> ADD</a>
                         <% } %>
                         </td>
                         <td><img class="img img-fluid img-list-item" style="max-width: 80px;" src="/file_storage/products/<%- row.image %>"></td>
@@ -114,6 +114,49 @@
           });
      
       });
-
+     
+      $(document).on('click','.add-stock',function (e) {
+          e.preventDefault();
+          var product_id = $(this).attr('data-id');
+          var identity_code = $(this).attr('data-code');
+          $.confirm({
+                      title: `Add Quantity For # ${identity_code}`,
+                      content: '' +
+                      '<form action="" class="formName">' +
+                      '<input type="hidden" id="product_id" name="product_id" value="'+product_id+'" > '+
+                      '<input type="hidden" id="identity_code" name="identity_code" value="'+identity_code+'" > '+
+                      '<div class="form-group">' +
+                      '<label>Quantity:</label>' +
+                      '<input type="number" placeholder="Product Quantity" class="name form-control" required />' +
+                      '</div>' +
+                      '</form>',
+                      buttons: {
+                          formSubmit: {
+                              text: 'Submit',
+                              btnClass: 'btn-blue',
+                              action: function () {
+                                  var name = this.$content.find('.name').val();
+                                  if(!name){
+                                      $.alert('provide a valid name');
+                                      return false;
+                                  }
+                                  $.alert('Your name is ' + name);
+                              }
+                          },
+                          cancel: function () {
+                              //close
+                          },
+                      },
+                      onContentReady: function () {
+                          // bind to events
+                          var jc = this;
+                          this.$content.find('form').on('submit', function (e) {
+                              // if the user submits the form by pressing enter in the field.
+                              e.preventDefault();
+                              jc.$$formSubmit.trigger('click'); // reference the button and click it
+                          });
+                      }
+                  });
+      });
   })
 </script>
