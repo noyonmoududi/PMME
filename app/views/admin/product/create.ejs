@@ -1,0 +1,120 @@
+<%- include('../layout/adminHeader'); -%>
+
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header d-flex p-0">
+            <h3 class="card-title p-3"><b><%- (typeof page_title != 'undefined') ? page_title : ''; %></b></h3>
+            <ul class="nav nav-pills ml-auto p-2">
+              <li class="nav-item">
+                <a class="btn btn-sm btn-primary" href="/admin/products"
+                  ><i class="fa fa-arrow-left"></i> Back</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div class="card-body">
+            <form action="/admin/products/product-create" method="post" enctype="multipart/form-data" >
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="title">Identity Code</label>
+                    <input type="text" class="form-control"id="identity_code" maxlength="15"  style="font-size: 20px; font-weight: bold;" name="identity_code" placeholder="Product Code" value="<%- (typeof identity_code != 'undefined') ? identity_code : ''; %>" />
+                    <p class="text-danger">
+                      <%= (typeof errors != 'undefined' &&
+                      errors.identity_code)?errors.identity_code:''; %>
+                    </p>
+                  </div>
+                  <div class="form-group">
+                    <label for="title">Product Name</label>
+                    <input type="text" class="form-control"id="name"  name="name" placeholder="Product Name" value="<%- (typeof old != 'undefined') ? old.name : ''; %>" />
+                    <p class="text-danger">
+                      <%= (typeof errors != 'undefined' &&
+                      errors.name)?errors.name:''; %>
+                    </p>
+                  </div>
+                 
+                  <div class="form-group">
+                    <label for="title">Category</label>
+                    <% if(typeof categoryData != 'undefined') { %>
+                        <select class="form-control" name="category_id" required>
+                            <option value="">--Select Category--</option>
+                            <% if(categoryData.length > 0) { %>
+                            <% for(let key in categoryData){ %>
+                                <option value="<%- categoryData[key].id %>" <%- (typeof old != 'undefined' && old?.category_id == categoryData[key].id) ? 'selected' : ''; %> >
+                                    <%- categoryData[key].name %>
+                                </option>
+                            <% } %>
+                            <% } %>
+                        </select>
+                    <% }else{ %>
+                        <p class="text-danger">Category Data not Found!.</p>
+                   <%  } %>
+                    <p class="text-danger">
+                      <%= (typeof errors != 'undefined' &&
+                      errors.provider)?errors.provider:''; %>
+                    </p>
+                  </div>
+                  <div class="form-group">
+                    <label for="title">Purchase Price</label>
+                    <input type="number" class="form-control"id="purchase_price"  name="purchase_price" placeholder="Product Purchase Price" value="<%- (typeof old != 'undefined') ? old.purchase_price : ''; %>" />
+                    <p class="text-danger">
+                      <%= (typeof errors != 'undefined' &&
+                      errors.purchase_price)?errors.purchase_price:''; %>
+                    </p>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="title">Sale Price</label>
+                    <input type="number" class="form-control"id="sale_price"  name="sale_price" placeholder="Product Sale Price" value="<%- (typeof old != 'undefined') ? old.sale_price : ''; %>" />
+                    <p class="text-danger">
+                      <%= (typeof errors != 'undefined' &&
+                      errors.sale_price)?errors.sale_price:''; %>
+                    </p>
+                  </div>
+                  <div class="form-group">
+                    <label for="title">Brand</label>
+                    <% if(typeof brandData != 'undefined') { %>
+                        <select class="form-control" name="brand_id" required>
+                            <option value="">--Select Brand--</option>
+                            <% if(brandData.length > 0) { %>
+                            <% for(let key in brandData){ %>
+                                <option value="<%- brandData[key].id %>" <%- (typeof old != 'undefined' && old?.brand_id == brandData[key].id) ? 'selected' : ''; %> >
+                                    <%- brandData[key].name %>
+                                </option>
+                            <% } %>
+                            <% } %>
+                        </select>
+                    <% }else{ %>
+                        <p class="text-danger">Category Data not Found!.</p>
+                   <%  } %>
+                    <p class="text-danger">
+                      <%= (typeof errors != 'undefined' &&
+                      errors.provider)?errors.provider:''; %>
+                    </p>
+                  </div>
+                      <div class="form-group">
+                        <label for="title">Project Image</label>
+                        <input type="file" class="form-control" id="image" name="image"/>
+                      </div>
+                      <div class="form-group">
+                        <label for="title">Product Details</label>
+                        <textarea class="form-control"id="description"  name="description" placeholder="Product Details"><%- (typeof old != 'undefined') ? old.description : ''; %></textarea>
+                      </div>
+                    
+                </div>
+                
+                  <button type="submit" class="btn btn-primary">Submit</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%- include('../layout/adminFooter'); -%>

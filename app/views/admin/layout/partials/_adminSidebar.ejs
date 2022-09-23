@@ -28,11 +28,11 @@
               </a>
             </li>
             <% } %>
-            <% if(has_permission(Request, ['project.list'])){ %>
+            <% if(has_permission(Request, ['product.list'])){ %>
               <li class="nav-item">
-                <a href="/admin/project" class="nav-link <%- (Request.path == '/project' || Request.path == '/project-create') ? 'active' : '' %>">
+                <a href="/admin/products" class="nav-link <%- (Request.path == '/products' || Request.path == '/product-create') ? 'active' : '' %>">
                   <i class="nav-icon fas fa-book"></i>
-                  <p>Projects</p>
+                  <p>Products</p>
                 </a>
               </li>
               <% } %>

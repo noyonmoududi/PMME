@@ -56,6 +56,15 @@ route.post('/settings/acl/:id/permissions',auth, has_permission(['acl.create']),
 route.get('/settings/direct-permissions-check/:id',auth, has_permission(['acl.list']),controller('admin/user/acl/userDirectPermissionCheck'));
 //LOGS
 route.get('/logs/user',auth,has_permission(['system.log.list']), controller('admin/user_log/logList'));
+//Product
+ route.get('/products',auth,has_permission(['product.list']), controller('admin/product/productList'));
+ route.get('/products/product-create',auth,has_permission(['product.create']), controller('admin/product/productCreate'));
+ route.post('/products/product-create',auth,has_permission(['product.create']),single_uploader('products'), controller('admin/product/productDataSave'));
+ route.get('/products/:id/product-edit',auth, has_permission(['product.edit']),controller('admin/product/productEdit'));
+ route.post('/products/product-edit',auth, has_permission(['product.edit']),single_uploader('products'), controller('admin/product/productDataUpdate'));
+ route.post('/products/:id/product-delete',auth, has_permission(['product.delete']), controller('admin/product/productDelete'));
+
+
 //Providers
 // route.get('/provider',auth,has_permission(['provider.list']), controller('admin/provider/providerList'));
 // route.get('/provider/provider-create',auth,has_permission(['provider.create']), controller('admin/provider/providerCreate'));
@@ -63,14 +72,6 @@ route.get('/logs/user',auth,has_permission(['system.log.list']), controller('adm
 // route.get('/provider/:id/provider-edit',auth, has_permission(['provider.edit']), controller('admin/provider/providerEdit'));
 // route.post('/provider/provider-edit',auth, has_permission(['provider.edit']), single_uploader('providers'), controller('admin/provider/providerDataEdit'));
 // route.post('/provider/:id/provider-delete',auth, has_permission(['provider.delete']), controller('admin/provider/providerDelete'));
-
-//Projects
-// route.get('/project',auth,has_permission(['project.list']), controller('admin/project/projectList'));
-// route.get('/project/project-create',auth,has_permission(['project.create']), controller('admin/project/projectCreate'));
-// route.post('/project/project-create',auth,has_permission(['project.create']),single_uploader('projects'), controller('admin/project/projectDataSave'));
-// route.get('/project/:id/project-edit',auth, has_permission(['project.edit']),controller('admin/project/projectEdit'));
-// route.post('/project/project-edit',auth, has_permission(['project.edit']),single_uploader('projects'), controller('admin/project/projectDataEdit'));
-// route.post('/project/:id/project-delete',auth, has_permission(['project.delete']), controller('admin/project/projectDelete'));
 
 
 //sales-units

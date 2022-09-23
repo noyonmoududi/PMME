@@ -41,6 +41,7 @@ module.exports = class product extends Controller {
 
             let rows = await query_builder.limit(limit)
                         .offset(offset)
+                        .where(ProductModel.table + '.status',1)
                         .select([
                             ProductModel.table+'.*',
                             BrandModel.table+'.name as brand_name',
@@ -82,17 +83,20 @@ module.exports = class product extends Controller {
             old: Req.flash('old')[0]
         }
         try {
+            let random = require("randomstring");
+            let randomCode = random.generate(8);
             let CategoryModel = loadModel('CategoryModel');
             let BrandModel = loadModel('BrandModel');
             let categories = await CategoryModel.getAllCategory();
             let brands = await BrandModel.getAllBrands();
             data.categoryData = categories;
             data.brandData = brands;
+            data.identity_code = randomCode;
             data.page_title = 'Create product';
             Res.render('admin/product/create',data);
         } catch (error) {
-            errorLog(Req,Res,err);
-            console.log(err);
+            errorLog(Req,Res,error);
+            console.log(error);
             Res.render('errors/common_error',{Request:Req});
         }
     }
@@ -107,18 +111,15 @@ module.exports = class product extends Controller {
             let req_data={};
             let RequestData = loadValidator(Req, Res);
             req_data = {
-                project_num: RequestData.post('project_num', true, 'project num').type('string').val(),
-                project_name: RequestData.post('project_name', true, 'project name').val(),
-                provider_id: RequestData.post('provider', true, 'provider').val(),
-                type: RequestData.post('type', true, 'type').val(),
-                methodology_protocol: RequestData.post('methodology_protocol', true, 'methodology protocol').val(),
-                region: RequestData.post('region', true, 'region').val(),
-                country: RequestData.post('country', true, 'country').val(),
-                registry_url: RequestData.post('registry_url', false, 'registry url').val(),
-                description: RequestData.post('description', false, 'description').val(),
-                project_site_location: RequestData.post('project_site_location', true, 'project site location').val(),
-                project_developer: RequestData.post('project_developer', true, 'project developer').val(),
+                identity_code: RequestData.post('identity_code', true, 'identity code').type('string').val(),
+                name: RequestData.post('name', true, 'Product name').val(),
+                category_id: RequestData.post('category_id', true, 'category ').type('int').val(),
+                purchase_price: RequestData.post('purchase_price', true, 'purchase price').type('number').val(),
+                sale_price: RequestData.post('sale_price', true, 'sale price').type('number').val(),
+                brand_id: RequestData.post('brand_id', true, 'Brand ').type('int').val(),
+                description: RequestData.post('description', false, 'description ').type('string').val(),
                 image:uploadfileName,
+                created_by:Req.session.user.id,
                 created_at:new Date(),
                 updated_at:new Date(),
             };
@@ -133,7 +134,7 @@ module.exports = class product extends Controller {
                     Res.redirect(`/admin/products`);
                 }else{
                     Req.session.flash_toastr_error = 'Product Identity Code Already exist!.';
-                    Res.redirect(`/admin/product/product-create`);
+                    Res.redirect(`/admin/products/product-create`);
                 }
            
         } catch (err) {
@@ -150,46 +151,49 @@ module.exports = class product extends Controller {
             errors: Req.flash('errors')[0],
             old: Req.flash('old')[0]
         }
-        data.page_title = 'Edit Product';
-        let id = Req.params["id"];
+        try {
+            data.page_title = 'Edit Product';
+            let id = Req.params["id"];
 
-        let ProductModel = loadModel('ProductModel');
-        let CategoryModel = loadModel('CategoryModel');
-        let BrandModel = loadModel('BrandModel');
-        let categories = await CategoryModel.getAllCategory();
-        let brands = await BrandModel.getAllBrands();
-        let rowdata = await ProductModel.getProductByProductId(id);
-        data.old = rowdata;
-        data.categoryData = categories;
-        data.brandData = brands;
-        Res.render('admin/product/edit',data);
+            let ProductModel = loadModel('ProductModel');
+            let CategoryModel = loadModel('CategoryModel');
+            let BrandModel = loadModel('BrandModel');
+            let categories = await CategoryModel.getAllCategory();
+            let brands = await BrandModel.getAllBrands();
+            let rowdata = await ProductModel.getProductByProductId(id);
+            data.old = rowdata;
+            data.categoryData = categories;
+            data.brandData = brands;
+            Res.render('admin/product/edit',data);
+        } catch (error) {
+            errorLog(Req,Res,error);
+            console.log(error);
+            Res.render('errors/common_error',{Request:Req});
+        }
+        
     }
 
     async productDataUpdate(Req, Res) {
         let ActivityLogModel = loadModel('ActivityLogModel');
         let uploadfileName =null;
-        let uploadOrginalfileName =null;
         try {
             if (Req.files && Req.files.length > 0) {
                 uploadfileName = Req.files[0].filename;
-                uploadOrginalfileName = Req.files[0].originalname;
             }
             let req_data={};
             let RequestData = loadValidator(Req, Res);
             let id = RequestData.post('productId', true, 'productId').val();
             let previousFile = RequestData.post('previousFile', false, 'previousFile').val();
             req_data = {
-                project_num: RequestData.post('project_num', true, 'project num').type('string').val(),
-                project_name: RequestData.post('project_name', true, 'project name').val(),
-                provider_id: RequestData.post('provider', true, 'provider').val(),
-                type: RequestData.post('type', true, 'type').val(),
-                methodology_protocol: RequestData.post('methodology_protocol', true, 'methodology protocol').val(),
-                region: RequestData.post('region', true, 'region').val(),
-                country: RequestData.post('country', true, 'country').val(),
-                registry_url: RequestData.post('registry_url', false, 'registry url').val(),
-                description: RequestData.post('description', false, 'description').val(),
-                project_site_location: RequestData.post('project_site_location', true, 'project site location').val(),
-                project_developer: RequestData.post('project_developer', true, 'project developer').val(),
+                id:id,
+                identity_code: RequestData.post('identity_code', true, 'identity code').type('string').val(),
+                name: RequestData.post('name', true, 'Product name').val(),
+                category_id: RequestData.post('category_id', true, 'category ').type('int').val(),
+                purchase_price: RequestData.post('purchase_price', true, 'purchase price').type('number').val(),
+                sale_price: RequestData.post('sale_price', true, 'sale price').type('number').val(),
+                brand_id: RequestData.post('brand_id', true, 'Brand ').type('int').val(),
+                description: RequestData.post('description', false, 'description ').type('string').val(),
+                updated_by:Req.session.user.id,
                 updated_at:new Date(),
             };
             if (uploadfileName != null) {
@@ -231,7 +235,7 @@ module.exports = class product extends Controller {
                     identity_code: rowdata.identity_code,
                     status: 0
                 };
-                let result = await ProjectModel.updateProduct(req_data);// just Status Update
+                let result = await ProductModel.updateProduct(req_data);// just Status Update
                 Req.session.flash_toastr_success = 'Product Deleted successfully!';
                 await ActivityLogModel.saveLogData(Req,Res,'Product has been deleted by',ProductModel.table,id);
             }else{
