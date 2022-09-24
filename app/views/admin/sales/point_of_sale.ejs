@@ -5,6 +5,9 @@
         border: 2px solid #73AD21;
         padding: 5px; 
 }
+.display {
+       display: none;
+}
 
 </style>
 <section class="content">
@@ -20,19 +23,19 @@
                         <div class="col-sm-4">
                         <div class="form-group">
                         <label>Identity Code</label>
-                        <input type="text" class="form-control" placeholder="Enter Product Code">
+                        <input type="text" class="form-control"  placeholder="Enter Product Code">
                         </div>
                         </div>
                         <div class="col-sm-4">
                         <div class="form-group">
                         <label>Invoice No</label>
-                        <input type="text" class="form-control" readonly value="09875434567890">
+                        <input type="text" class="form-control" id="invoice_no" name="invoice_no" value="<%- (typeof invoiceNo != 'undefined') ? invoiceNo : ''; %>" readonly>
                         </div>
                         </div>
                         <div class="col-sm-4">
                             <div class="form-group">
                             <label>Date</label>
-                            <input type="text" class="form-control" readonly value="24/09/2022">
+                            <input type="text" class="form-control" id="invoiceDate" name="invoiceDate" disabled >
                             </div>
                             </div>
 
@@ -100,6 +103,7 @@
                                   <th>SL</th>
                                   <th>Identity Code</th>
                                   <th>Product Name</th>
+                                  <th>Purchase Price</th>
                                   <th>Sale Price</th>
                                   <th>Quantity</th>
                                   <th>Total Amount</th>
@@ -107,8 +111,8 @@
                                 </tr>
                               </thead>
                               <tbody>
-                               <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                               <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                               <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                               <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
                               </tbody>
                             </table>
                         </div>
@@ -133,46 +137,59 @@
                         <label for="inputEmail3" class="col-sm-5 col-form-label"></label>
                         <div class="col-sm-7">
                             <div class="icheck-success d-inline">
-                                <input type="checkbox" id="checkboxSuccess2">
-                                <label for="checkboxSuccess2">
+                                <input type="checkbox" id="is_installMent">
+                                <label for="is_installMent">
                                     Is Installment
                                 </label>
                             </div>
                         </div>
                     </div>
-                    <div class="form-group row">
+                    <div class="form-group row display" id="divDuration">
                         <label for="inputEmail3" class="col-sm-5 col-form-label">Install Duration:</label>
                         <div class="col-sm-7">
                             <div class="input-group mb-3">
-                                <input type="text" class="form-control rounded-0">
+                                <input type="number" name="" id=""  min="0" class="form-control rounded-0">
                                 <span class="input-group-append">
                                 <button type="button" class="btn btn-info btn-flat">Month</button>
                                 </span>
                             </div>
                         </div>
                     </div>
-                    <div class="form-group row">
+                    <div class="form-group row display" id="divDownPayment">
                         <label for="inputEmail3" class="col-sm-5 col-form-label">Down Payment:</label>
                         <div class="col-sm-7">
-                        <input type="number" class="form-control" id="inputEmail3" placeholder="">
+                        <input type="number" class="form-control" min="0" id="inputEmail3" placeholder="">
                         </div>
                     </div>
-                    <div class="form-group row">
+                    <div class="form-group row display" id="divDueAmt">
                         <label for="inputEmail3" class="col-sm-5 col-form-label">Due Amount:</label>
                         <div class="col-sm-7">
-                        <input type="number" class="form-control" id="inputEmail3" placeholder="" readonly>
+                        <input type="number" class="form-control" min="0" id="inputEmail3" placeholder="" readonly>
                         </div>
                     </div>
                     <div class="form-group row">
                         <label for="inputEmail3" class="col-sm-5 col-form-label">Total Payable Amount:</label>
                         <div class="col-sm-7">
-                        <input type="number" class="form-control" id="inputEmail3" placeholder="">
+                        <input type="number" class="form-control"  min="0" id="inputEmail3" placeholder="">
                         </div>
                     </div>
                     <div class="form-group row">
                         <label for="inputEmail3" class="col-sm-5 col-form-label">Payment Type:</label>
                         <div class="col-sm-7">
-                        <input type="email" class="form-control" id="inputEmail3" placeholder="">
+                            <% if(typeof paymentData != 'undefined') { %>
+                                <select class="form-control" name="brand_id" required>
+                                    <option value="">--Select Payment--</option>
+                                    <% if(paymentData.length > 0) { %>
+                                    <% for(let key in paymentData){ %>
+                                        <option value="<%- paymentData[key].id %>" <%- (typeof old != 'undefined' && old?.payment_type_id == paymentData[key].id) ? 'selected' : ''; %> >
+                                            <%- paymentData[key].name %>
+                                        </option>
+                                    <% } %>
+                                    <% } %>
+                                </select>
+                            <% }else{ %>
+                                <p class="text-danger">Data not Found!.</p>
+                           <%  } %>
                         </div>
                     </div>
                     <div class="form-group ">
@@ -197,3 +214,25 @@
 </section>
 
 <%- include('../layout/adminFooter'); -%>
+
+<script>
+     $(function () {
+        $("#expand_bar").click();
+        $('#invoiceDate').datepicker({
+            format: "yyyy-mm-dd",
+        }).datepicker("setDate" , new Date());
+
+        $('#is_installMent').change(function() {
+            var isChecked = $(this).is(":checked");
+            if (isChecked) {
+                $("#divDuration").removeClass("display");
+                $("#divDownPayment").removeClass("display");
+                $("#divDueAmt").removeClass("display");
+            }else{
+                $("#divDuration").addClass("display");
+                $("#divDownPayment").addClass("display");
+                $("#divDueAmt").addClass("display");
+            }
+         });
+     })
+</script>

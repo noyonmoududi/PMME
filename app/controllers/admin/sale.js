@@ -12,20 +12,13 @@ module.exports = class sale extends Controller {
         }
         try {
             let random = require("randomstring");
-            let randomCode = random.generate(8);
-            var d = new Date(),
-            month = '' + (d.getMonth() + 1),
-            day = '' + d.getDate(),
-            year = d.getFullYear();
-
-            console.log(year+month+day);
-            // let CategoryModel = loadModel('CategoryModel');
-            // let BrandModel = loadModel('BrandModel');
-            // let categories = await CategoryModel.getAllCategory();
-            // let brands = await BrandModel.getAllBrands();
-            // data.categoryData = categories;
-            // data.brandData = brands;
-            // data.identity_code = randomCode;
+            let randomCode = random.generate(4);
+            var currentDateTime = new Date();
+            let invoiceNum = currentDateTime.getFullYear() + ''+(currentDateTime.getMonth() + 1)+''+currentDateTime.getDate()+''+currentDateTime.getHours()+''+currentDateTime.getMinutes()+''+currentDateTime.getSeconds()+''+randomCode.toUpperCase();
+            let PaymentTypeModel = loadModel('PaymentTypeModel');
+            let payments = await PaymentTypeModel.getAllpayment();
+            data.paymentData = payments;
+            data.invoiceNo = invoiceNum;
             data.page_title = 'Point Of Sale';
             Res.render('admin/sales/point_of_sale',data);
         } catch (error) {
