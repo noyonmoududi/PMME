@@ -27,7 +27,6 @@ module.exports = class product extends Controller {
                 query.where(ProductModel.table + '.name','like',`%${search}%`)
                 query.orWhere(ProductModel.table + '.identity_code','like',`%${search}%`)
                 query.orWhere(ProductModel.table + '.purchase_price','like',`%${search}%`)
-                query.orWhere(ProductModel.table + '.sale_price','like',`%${search}%`)
                 query.orWhere(BrandModel.table + '.name','like',`%${search}%`)
                 query.orWhere(CategoryModel.table + '.name','like',`%${search}%`)
             });
@@ -115,7 +114,6 @@ module.exports = class product extends Controller {
                 name: RequestData.post('name', true, 'Product name').val(),
                 category_id: RequestData.post('category_id', true, 'category ').type('int').val(),
                 purchase_price: RequestData.post('purchase_price', true, 'purchase price').type('number').val(),
-                sale_price: RequestData.post('sale_price', true, 'sale price').type('number').val(),
                 brand_id: RequestData.post('brand_id', true, 'Brand ').type('int').val(),
                 description: RequestData.post('description', false, 'description ').type('string').val(),
                 image:uploadfileName,
@@ -190,7 +188,6 @@ module.exports = class product extends Controller {
                 name: RequestData.post('name', true, 'Product name').val(),
                 category_id: RequestData.post('category_id', true, 'category ').type('int').val(),
                 purchase_price: RequestData.post('purchase_price', true, 'purchase price').type('number').val(),
-                sale_price: RequestData.post('sale_price', true, 'sale price').type('number').val(),
                 brand_id: RequestData.post('brand_id', true, 'Brand ').type('int').val(),
                 description: RequestData.post('description', false, 'description ').type('string').val(),
                 updated_by:Req.session.user.id,

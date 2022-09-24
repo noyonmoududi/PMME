@@ -13,6 +13,12 @@ module.exports = class sale extends Controller {
         try {
             let random = require("randomstring");
             let randomCode = random.generate(8);
+            var d = new Date(),
+            month = '' + (d.getMonth() + 1),
+            day = '' + d.getDate(),
+            year = d.getFullYear();
+
+            console.log(year+month+day);
             // let CategoryModel = loadModel('CategoryModel');
             // let BrandModel = loadModel('BrandModel');
             // let categories = await CategoryModel.getAllCategory();
