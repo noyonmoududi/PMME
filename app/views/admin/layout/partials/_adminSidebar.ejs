@@ -36,11 +36,11 @@
                 </a>
               </li>
               <% } %>
-              <% if(has_permission(Request, ['retirement.project.list'])){ %>
+              <% if(has_permission(Request, ['sale.create'])){ %>
                 <li class="nav-item">
-                  <a href="/admin/retirements" class="nav-link <%- (Request.path == '/retirements' || Request.path == '/retirements-create') ? 'active' : '' %>">
-                    <i class="nav-icon fas fa-book"></i>
-                    <p>Retirements</p>
+                  <a href="/admin/point-of-sale" class="nav-link <%- (Request.path == '/point-of-sale') ? 'active' : '' %>">
+                    <i class="nav-icon fas fa-shopping-cart "></i>
+                    <p>Point Of Sale</p>
                   </a>
                 </li>
                 <% } %>

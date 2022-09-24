@@ -63,8 +63,10 @@ route.get('/logs/user',auth,has_permission(['system.log.list']), controller('adm
  route.get('/products/:id/product-edit',auth, has_permission(['product.edit']),controller('admin/product/productEdit'));
  route.post('/products/product-edit',auth, has_permission(['product.edit']),single_uploader('products'), controller('admin/product/productDataUpdate'));
  route.post('/products/:id/product-delete',auth, has_permission(['product.delete']), controller('admin/product/productDelete'));
-
-
+//Inentory
+route.post('/inventory/:product_id/:identity_code/inventory-save',auth, has_permission(['inventory.create']), controller('admin/inventory/productInventorySave'));
+//Point Of Sale
+ route.get('/point-of-sale',auth,has_permission(['sale.create']), controller('admin/sale/pointOfSale'));
 //Providers
 // route.get('/provider',auth,has_permission(['provider.list']), controller('admin/provider/providerList'));
 // route.get('/provider/provider-create',auth,has_permission(['provider.create']), controller('admin/provider/providerCreate'));
