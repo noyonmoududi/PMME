@@ -27,4 +27,26 @@ module.exports = class sale extends Controller {
             Res.render('errors/common_error',{Request:Req});
         }
     }
+
+    async getProductDetailsWithStock(Req, Res) {
+        try {
+            let identity_code = Req.params["identity_code"];
+            let ProductModel = loadModel('ProductModel');
+            let result = await ProductModel.getProductStockByCode(identity_code);
+            if (result != 'undefined') {
+                if (result.current_stock > 0 ) {
+                    Res.send(result);
+                } else {
+                    Res.send('NOSTOCK');
+                }
+            }else{
+                Res.send('error');
+            }
+        } catch (error) {
+            errorLog(Req,Res,error);
+            console.log(error);
+            Res.send("error");
+        }
+       
+    }
 }

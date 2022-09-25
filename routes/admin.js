@@ -67,6 +67,7 @@ route.get('/logs/user',auth,has_permission(['system.log.list']), controller('adm
 route.post('/inventory/:product_id/:identity_code/inventory-save',auth, has_permission(['inventory.create']), controller('admin/inventory/productInventorySave'));
 //Point Of Sale
  route.get('/point-of-sale',auth,has_permission(['sale.create']), controller('admin/sale/pointOfSale'));
+ route.get('/get-product-details/:identity_code',auth,has_permission(['sale.create']), controller('admin/sale/getProductDetailsWithStock'));
 //Providers
 // route.get('/provider',auth,has_permission(['provider.list']), controller('admin/provider/providerList'));
 // route.get('/provider/provider-create',auth,has_permission(['provider.create']), controller('admin/provider/providerCreate'));

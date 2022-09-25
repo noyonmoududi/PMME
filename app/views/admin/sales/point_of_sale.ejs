@@ -23,7 +23,7 @@
                         <div class="col-sm-4">
                         <div class="form-group">
                         <label>Identity Code</label>
-                        <input type="text" class="form-control"  placeholder="Enter Product Code">
+                        <input type="text" class="form-control"  id="identity_code" name="identity_code" placeholder="Enter Product Code">
                         </div>
                         </div>
                         <div class="col-sm-4">
@@ -110,9 +110,8 @@
                                   <th>Action</th>
                                 </tr>
                               </thead>
-                              <tbody>
-                               <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                               <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                              <tbody id="sale_item_table_body">
+                              
                               </tbody>
                             </table>
                         </div>
@@ -234,5 +233,37 @@
                 $("#divDueAmt").addClass("display");
             }
          });
+
+         $('#identity_code').change(function() {
+            let identity_code = $(this).val();
+            let checkUrl = '/admin/get-product-details/'+identity_code;
+            return $.ajax({
+                        url: checkUrl,
+                        dataType: 'json',
+                        method: 'get'
+                    }).done(function (response) {
+                        var tableRow ='';
+                        if (response != 'NOSTOCK' && response != 'error') {
+                            tableRow = `<tr>
+                                        <td></td>
+                                        <td>${response.identity_code}</td>
+                                        <td>${response.name}</td>
+                                        <td>${response.purchase_price}</td>
+                                        <td></td>
+                                        <td>${response.current_stock}</td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>`;
+                            $('#sale_item_table_body').append(tableRow);
+                            $('#identity_code').val('');
+                        }else{
+                            alert('This Product Stock Not Avaiable!.');
+                        }
+                       
+                    }).fail(function(){
+                        alert('Something went wrong.');
+                        $(this).val('');
+                    });
+         })
      })
 </script>
