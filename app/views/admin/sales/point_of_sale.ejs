@@ -16,6 +16,7 @@
       <div class="col-md-12">
         <div class="card">
           <div class="card-body">
+            <form method="post" action="/admin/point-of-sale/save">
             <div class="row">
                 <div class="col-md-9">
                     <div class="callout" >
@@ -40,7 +41,7 @@
                             </div>
 
                     </div>
-                </div>
+                    </div>
                     <div class="callout">
                         <div class="row" >
                             <div class="col-sm-3">
@@ -52,7 +53,7 @@
                             <div class="col-sm-3">
                                 <div class="form-group">
                                 <label>Customer Phone</label>
-                                <input type="text" class="form-control" placeholder="Customer Phone">
+                                <input type="text" class="form-control" min="0" maxlength="11" placeholder="Customer Phone">
                                 </div>
                             </div>
                             <div class="col-sm-3">
@@ -78,7 +79,7 @@
                             <div class="col-sm-3">
                                 <div class="form-group">
                                 <label>Nominee Phone</label>
-                                <input type="text" class="form-control" placeholder="Nominee Phone">
+                                <input type="text" class="form-control"  min="0" maxlength="11"  placeholder="Nominee Phone">
                                 </div>
                             </div>
                             <div class="col-sm-3">
@@ -98,21 +99,21 @@
                     <div class="callout">
                         <div class="table-responsive ">
                             <table class="table table-bordered table-hover text-nowrap">
-                              <thead>
-                                <tr>
-                                  <th>SL</th>
-                                  <th>Identity Code</th>
-                                  <th>Product Name</th>
-                                  <th>Purchase Price</th>
-                                  <th>Sale Price</th>
-                                  <th>Quantity</th>
-                                  <th>Total Amount</th>
-                                  <th>Action</th>
-                                </tr>
-                              </thead>
-                              <tbody id="sale_item_table_body">
-                              
-                              </tbody>
+                                <thead>
+                                    <tr>
+                                      <th>SL</th>
+                                      <th>Identity Code</th>
+                                      <th>Product Name</th>
+                                      <th>Purchase Price</th>
+                                      <th>Sale Price</th>
+                                      <th>Quantity</th>
+                                      <th>Total Amount</th>
+                                      <th>Action</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody id="sale_item_table_body">
+                                  
+                                  </tbody>
                             </table>
                         </div>
                     </div>
@@ -144,7 +145,7 @@
                         </div>
                     </div>
                     <div class="form-group row display" id="divDuration">
-                        <label for="inputEmail3" class="col-sm-5 col-form-label">Install Duration:</label>
+                        <label for="inputEmail3" class="col-sm-5 col-form-label">Installment Duration:</label>
                         <div class="col-sm-7">
                             <div class="input-group mb-3">
                                 <input type="number" name="" id=""  min="0" class="form-control rounded-0">
@@ -197,13 +198,14 @@
                             <button type="button" class="btn btn-outline-danger btn-block btn-sm"><i class="fa fa-times"></i>  CANCEL</button>
                             </div>
                             <div class="col-md-6">
-                            <button type="button" class="btn btn-outline-success btn-block btn-sm"><i class="fa fa-save"></i>  SAVE ORDER</button>
+                            <button type="submit" class="btn btn-outline-success btn-block btn-sm"><i class="fa fa-save"></i>  SAVE ORDER</button>
                             </div>
                             </div>
                     </div>
                 </div>
                 </div>
             </div>
+            </form>
           </div>
         </div>
       </div>
@@ -244,8 +246,9 @@
                     }).done(function (response) {
                         var tableRow ='';
                         if (response != 'NOSTOCK' && response != 'error') {
+                            var rowCount = $("#sale_item_table_body tr").length;
                             tableRow = `<tr>
-                                        <td></td>
+                                        <td>${rowCount +1}</td>
                                         <td>${response.identity_code}</td>
                                         <td>${response.name}</td>
                                         <td>${response.purchase_price}</td>

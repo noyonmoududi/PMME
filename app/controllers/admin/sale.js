@@ -49,4 +49,13 @@ module.exports = class sale extends Controller {
         }
        
     }
+
+    async saveSaleData(Req, Res) {
+        let data = {
+            Request: Req,
+            errors: Req.flash('errors')[0],
+            old: Req.flash('old')[0]
+        }
+        Res.render('admin/sales/point_of_sale',data);
+    }
 }
