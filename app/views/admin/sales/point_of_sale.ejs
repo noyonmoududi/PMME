@@ -107,6 +107,7 @@
                                       <th>Purchase Price</th>
                                       <th>Sale Price</th>
                                       <th>Quantity</th>
+                                      <th>Stock</th>
                                       <th>Total Amount</th>
                                       <th>Action</th>
                                     </tr>
@@ -247,17 +248,25 @@
                         var tableRow ='';
                         if (response != 'NOSTOCK' && response != 'error') {
                             var rowCount = $("#sale_item_table_body tr").length;
-                            tableRow = `<tr>
+                            let isNew;
+                            if (rowCount >0) {
+                                isNew =  ItemQtyIncrement(response.identity_code);
+                            }
+                            if (!isNew) {
+                                tableRow = `<tr>
                                         <td>${rowCount +1}</td>
-                                        <td>${response.identity_code}</td>
-                                        <td>${response.name}</td>
-                                        <td>${response.purchase_price}</td>
-                                        <td></td>
-                                        <td>${response.current_stock}</td>
-                                        <td></td>
-                                        <td></td>
+                                        <td><input type="text" class="form-control" id="tbt_identity_code" name="tbt_identity_code[]" value="${response.identity_code}" readonly></td>
+                                        <td><input type="text" class="form-control" id="tbl_product_name" name="tbl_product_name[]" value="${response.name}" readonly></td>
+                                        <td><input type="text" class="form-control" id="tbl_purchase_price" name="tbl_purchase_price[]" value="${response.purchase_price}" readonly></td>
+                                        <td><input type="number" class="form-control tbl_sale_price" min="0" id="tbl_sale_price" name="tbl_sale_price[]" value=""></td>
+                                        <td><input type="number" class="form-control tbl_sale_quantity" min="0" id="tbl_sale_quantity" name="tbl_sale_quantity[]" value="1"></td>
+                                        <td><input type="number" class="form-control current_stock" min="0" id="current_stock" name="current_stock[]" value="${response.current_stock}"></td>
+                                        <td><input type="number" class="form-control tbl_total_price" min="0" id="tbl_total_price" name="tbl_total_price[]" value="" readonly></td>
+                                        <td><a href="#" class=" deleteItem btn btn-danger"><i class="fa fa-trash"></i></a></td>
                                     </tr>`;
                             $('#sale_item_table_body').append(tableRow);
+                            }
+
                             $('#identity_code').val('');
                         }else{
                             alert('This Product Stock Not Avaiable!.');
@@ -267,6 +276,69 @@
                         alert('Something went wrong.');
                         $(this).val('');
                     });
-         })
+         });
+         $("#sale_item_table_body").on('keyup', '.tbl_sale_price', function () {
+             var thisRow = $(this);
+             rowDataCalculation(thisRow);
+        });
+        $("#sale_item_table_body").on('keyup', '.tbl_sale_quantity', function () {
+             var thisRow = $(this);
+             rowDataCalculation(thisRow);
+        });
+
+    //Delete from grid Table
+        $(document).on('click', 'a.deleteItem', function (e) {
+            e.preventDefault();
+            var self = $(this);
+            var vat = self.parents('tr').find('#vat').val();
+            if (self) {
+                $(this).parents('tr').css("background-color", "#dc143c").fadeOut(800, function () {
+                    $(this).remove();
+                    compute(vat);
+                    reset();
+                });
+            } else {
+                //t("delete hoi ni");
+                toastr.error("Data cann't delete");
+            }
+        });
      })
+
+    function ItemQtyIncrement(identity_code) {
+        let isFound = false;
+        $.each($("#sale_item_table_body tr"),
+            function() {
+                var tbt_identity_code = $(this).find('#tbt_identity_code').val();
+                var quantity = $(this).find('#tbl_sale_quantity').val();
+                if (identity_code === tbt_identity_code) {
+                    $(this).find('#tbl_sale_quantity').val(parseInt(quantity) + 1);
+                    //This For SameBarcode Scan Calculation
+                     var tbl_sale_quantity = $(this).find('#tbl_sale_quantity').val();
+                     var salePrice = $(this).find('#tbl_sale_price').val();
+                     var totalPrice = parseInt(salePrice) * parseInt(tbl_sale_quantity);
+                     $(this).find('#tbl_total_price').val(totalPrice);
+                    //end
+                    isFound = true;
+                    
+                }
+            });
+        return isFound;
+
+    }
+
+    function rowDataCalculation(data) {
+        var stock = data.parents('tr').find('.current_stock').val();
+        var quantity = data.parents('tr').find('.tbl_sale_quantity').val();
+        if (parseInt(quantity) > parseInt(stock)) {
+            alert("Stock Not Available");
+            data.parents('tr').find('.tbl_sale_quantity').val(stock);
+            return false;
+        } else {
+            var subTotal = data.parents('tr').find('.tbl_total_price');
+            var salePrice = data.parents('tr').find('.tbl_sale_price').val();
+            var totalSubPrice = parseInt(quantity) * parseFloat(salePrice);
+            subTotal.val(totalSubPrice);
+        }
+
+    }
 </script>
