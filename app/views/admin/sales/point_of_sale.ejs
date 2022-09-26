@@ -98,7 +98,7 @@
                     </div>
                     <div class="callout">
                         <div class="table-responsive ">
-                            <table class="table table-bordered table-hover text-nowrap">
+                            <table class="table table-bordered table-hover text-nowrap" id="sale_item_table">
                                 <thead>
                                     <tr>
                                       <th>SL</th>
@@ -125,13 +125,13 @@
                     <div class="form-group row">
                         <label for="inputEmail3" class="col-sm-5 col-form-label">Net Amount:</label>
                         <div class="col-sm-7">
-                        <input type="number" class="form-control" readonly id="inputEmail3" placeholder="">
+                        <input type="number" class="form-control" readonly id="net_amount" name="net_amount" placeholder="">
                         </div>
                     </div>
                     <div class="form-group row">
                         <label for="inputEmail3" class="col-sm-5 col-form-label">Total Item:</label>
                         <div class="col-sm-7">
-                        <input type="text" class="form-control" id="inputEmail3" placeholder="" readonly>
+                        <input type="text" class="form-control" id="invoice_item" name="invoice_item" placeholder="" readonly>
                         </div>
                     </div>
                     <div class="form-group row">
@@ -159,7 +159,7 @@
                     <div class="form-group row display" id="divDownPayment">
                         <label for="inputEmail3" class="col-sm-5 col-form-label">Down Payment:</label>
                         <div class="col-sm-7">
-                        <input type="number" class="form-control" min="0" id="inputEmail3" placeholder="">
+                        <input type="number" class="form-control" min="0" id="down_payment" name="down_payment" placeholder="">
                         </div>
                     </div>
                     <div class="form-group row display" id="divDueAmt">
@@ -171,7 +171,7 @@
                     <div class="form-group row">
                         <label for="inputEmail3" class="col-sm-5 col-form-label">Total Payable Amount:</label>
                         <div class="col-sm-7">
-                        <input type="number" class="form-control"  min="0" id="inputEmail3" placeholder="">
+                        <input type="number" class="form-control"  min="0" id="total_payable_amount" name="total_payable_amount" placeholder="">
                         </div>
                     </div>
                     <div class="form-group row">
@@ -237,7 +237,8 @@
             }
          });
 
-         $('#identity_code').change(function() {
+         $('#identity_code').change(function(e) {
+            e.preventDefault();
             let identity_code = $(this).val();
             let checkUrl = '/admin/get-product-details/'+identity_code;
             return $.ajax({
@@ -260,7 +261,7 @@
                                         <td><input type="text" class="form-control" id="tbl_purchase_price" name="tbl_purchase_price[]" value="${response.purchase_price}" readonly></td>
                                         <td><input type="number" class="form-control tbl_sale_price" min="0" id="tbl_sale_price" name="tbl_sale_price[]" value=""></td>
                                         <td><input type="number" class="form-control tbl_sale_quantity" min="0" id="tbl_sale_quantity" name="tbl_sale_quantity[]" value="1"></td>
-                                        <td><input type="number" class="form-control current_stock" min="0" id="current_stock" name="current_stock[]" value="${response.current_stock}"></td>
+                                        <td><input type="number" class="form-control current_stock" min="0" id="current_stock" name="current_stock[]" value="${response.current_stock}" readonly></td>
                                         <td><input type="number" class="form-control tbl_total_price" min="0" id="tbl_total_price" name="tbl_total_price[]" value="" readonly></td>
                                         <td><a href="#" class=" deleteItem btn btn-danger"><i class="fa fa-trash"></i></a></td>
                                     </tr>`;
@@ -280,10 +281,12 @@
          $("#sale_item_table_body").on('keyup', '.tbl_sale_price', function () {
              var thisRow = $(this);
              rowDataCalculation(thisRow);
+             compute();
         });
         $("#sale_item_table_body").on('keyup', '.tbl_sale_quantity', function () {
              var thisRow = $(this);
              rowDataCalculation(thisRow);
+             compute();
         });
 
     //Delete from grid Table
@@ -340,5 +343,24 @@
             subTotal.val(totalSubPrice);
         }
 
+    }
+    function compute() {
+        var sumPrice = 0;
+        var sumItem = 0;
+        $.each($("#sale_item_table_body tr"),function() {
+            sumPrice += getnum($(this).find('#tbl_total_price').val());
+            sumItem += getnum($(this).find('#tbl_sale_quantity').val());
+            function getnum(t){
+                if(isNumeric(t)){
+                    return parseInt(t,10);
+                }
+                return 0;
+                function isNumeric(n) {
+                    return !isNaN(parseFloat(n)) && isFinite(n);
+                }
+            }
+        });
+        $("#net_amount").val(sumPrice);
+        $("#invoice_item").val(sumItem);
     }
 </script>
