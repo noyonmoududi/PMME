@@ -245,6 +245,15 @@ module.exports = class product extends Controller {
             Res.redirect(`/admin/products`);
         }
     }
+
+    async productStockInfo(Req, Res) {
+        let data = {
+            Request: Req,
+            errors: Req.flash('errors')[0],
+            old: Req.flash('old')[0]
+        }
+        Res.render('admin/product/stock_list',data);
+    }
 }
 
 async function deleteFile(filename) {

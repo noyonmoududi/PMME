@@ -44,6 +44,24 @@
                   </a>
                 </li>
                 <% } %>
+                <li class="nav-item">
+                  <a href="/admin/sale-info-list" class="nav-link <%- (Request.path == '/sale-info-list') ? 'active' : '' %>">
+                    <i class="nav-icon fas fa-shopping-cart "></i>
+                    <p>Sale Info List</p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="/admin/products-stock" class="nav-link <%- (Request.path == '/product-stock') ? 'active' : '' %>">
+                    <i class="nav-icon fas fa-book"></i>
+                    <p>Products Stock</p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="/admin/customer-due" class="nav-link <%- (Request.path == '/customer-due') ? 'active' : '' %>">
+                    <i class="nav-icon fas fa-users"></i>
+                    <p>Customers Due</p>
+                  </a>
+                </li>
           <% if(has_permission(Request, ['sale-unit.list'])){ %>
             <li class="nav-item">
               <a href="/admin/sales-units" class="nav-link <%- (Request.path == '/sales-units' || Request.path == '/sales-units/create') ? 'active' : '' %>">

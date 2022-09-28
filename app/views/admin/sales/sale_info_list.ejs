@@ -1,0 +1,119 @@
+<%- include('../layout/adminHeader'); -%>
+
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header d-flex p-0">
+            <h3 class="card-title p-3"><b>Sale Info List</b></h3>
+            
+          </div>
+
+          <div class="card-body p-0">
+            <div class="table-responsive">
+              <table class="table table-bordered table-hover text-nowrap">
+                <thead>
+                  <tr>
+                    <th>SL</th>
+                    <th>Invoice Num</th>
+                    <th>Invoice Date</th>
+                    <th>Net Amount</th>
+                    <th>Total Payable Amount</th>
+                    <th>Customer Name</th>
+                    <th>Payment Type</th>
+                    <th>Is Installment</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                 
+                </tbody>
+              </table>
+          </div>
+          </div>
+
+          <div class="card-footer clearfix">
+            <ul class="pagination pagination-sm m-0 float-right">
+            
+            </ul>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<%- include('../layout/adminFooter'); -%>
+
+<script>
+  $(function () {
+      $(document).on('click','.delete_btn',function (e) {
+          e.preventDefault();
+          var target = $(this).closest('form.delete_form');
+          $.confirm({
+                  icon: 'fas fa-warning',
+                  title: 'Confirm!',
+                  content: 'Do you want to delete this Product??',
+                  type: 'red',
+                  typeAnimated: true,
+                  buttons: {
+                      confirm: function () {
+                          target.submit();
+                      },
+                      cancel: function () {
+                      }
+                  }
+          });
+     
+      });
+     
+      $(document).on('click','.add-stock',function (e) {
+          e.preventDefault();
+          var product_id = $(this).attr('data-id');
+          var identity_code = $(this).attr('data-code');
+          $.confirm({
+                      title: `Add Quantity For # ${identity_code}`,
+                      content: '' +
+                      '<form class="formName" id="inventoryForm">' +
+                      '<div class="form-group">' +
+                      '<label>Quantity:</label>' +
+                      '<input type="number" name="quantity" minlength="0" placeholder="Product Quantity" class="quantity form-control" required />' +
+                      '</div>' +
+                      '</form>',
+                      buttons: {
+                          formSubmit: {
+                              text: 'SAVE',
+                              btnClass: 'btn-blue btn-success',
+                              action: function () {
+                                let checkUrl = `/admin/inventory/${product_id}/${identity_code}/inventory-save`;
+                                var formValue = $("#inventoryForm").serialize();
+                                var qty = this.$content.find('.quantity').val();
+                                if (product_id && identity_code && qty > 0 ) {
+                                    $.ajax({
+                                    url: checkUrl,
+                                    type: "POST",
+                                    data: formValue,
+                                    success: function (ret_data) {
+                                      if (ret_data == 'SUCCESS') { 
+                                        $.alert('Product Stock Added successfully!');
+                                      } else {
+                                        $.alert('Something Went Wrong.Please try again later.');
+                                      }
+                                      
+                                    }
+                                  })
+                                }else{
+                                  $.alert('Quantity Must be greater than 0.!');
+                                }
+                              }
+                          },
+                          cancel: function () {
+                              //close
+                          },
+                      },
+                  });
+      });
+  })
+</script>

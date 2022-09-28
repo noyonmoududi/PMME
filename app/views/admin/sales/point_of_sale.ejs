@@ -165,7 +165,7 @@
                     <div class="form-group row display" id="divDueAmt">
                         <label for="inputEmail3" class="col-sm-5 col-form-label">Due Amount:</label>
                         <div class="col-sm-7">
-                        <input type="number" class="form-control" min="0" id="inputEmail3" placeholder="" readonly>
+                        <input type="number" class="form-control" min="0" id="due_amount" name="due_amount" placeholder="" readonly>
                         </div>
                     </div>
                     <div class="form-group row">
@@ -288,7 +288,12 @@
              rowDataCalculation(thisRow);
              compute();
         });
-
+        $('#down_payment').keyup(function() {
+             var down_payment_value = parseFloat($(this).val());
+             var net_amount = parseFloat($('#net_amount').val());
+            $("#due_amount").val(net_amount-down_payment_value);
+            $("#total_payable_amount").val(down_payment_value);
+        });
     //Delete from grid Table
         $(document).on('click', 'a.deleteItem', function (e) {
             e.preventDefault();
@@ -362,5 +367,6 @@
         });
         $("#net_amount").val(sumPrice);
         $("#invoice_item").val(sumItem);
+        $("#total_payable_amount").val(sumPrice);
     }
 </script>

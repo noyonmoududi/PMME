@@ -58,6 +58,7 @@ route.get('/settings/direct-permissions-check/:id',auth, has_permission(['acl.li
 route.get('/logs/user',auth,has_permission(['system.log.list']), controller('admin/user_log/logList'));
 //Product
  route.get('/products',auth,has_permission(['product.list']), controller('admin/product/productList'));
+ route.get('/products-stock',auth, controller('admin/product/productStockInfo'));
  route.get('/products/product-create',auth,has_permission(['product.create']), controller('admin/product/productCreate'));
  route.post('/products/product-create',auth,has_permission(['product.create']),single_uploader('products'), controller('admin/product/productDataSave'));
  route.get('/products/:id/product-edit',auth, has_permission(['product.edit']),controller('admin/product/productEdit'));
@@ -67,8 +68,13 @@ route.get('/logs/user',auth,has_permission(['system.log.list']), controller('adm
 route.post('/inventory/:product_id/:identity_code/inventory-save',auth, has_permission(['inventory.create']), controller('admin/inventory/productInventorySave'));
 //Point Of Sale
  route.get('/point-of-sale',auth,has_permission(['sale.create']), controller('admin/sale/pointOfSale'));
+ route.get('/sale-info-list',auth, controller('admin/sale/saleInfoList'));
  route.get('/get-product-details/:identity_code',auth,has_permission(['sale.create']), controller('admin/sale/getProductDetailsWithStock'));
  route.post('/point-of-sale/save',auth,has_permission(['sale.create']), controller('admin/sale/saveSaleData'));
+
+ //Customers
+ route.get('/customer-due',auth, controller('admin/customer/dueCustomerList'));
+
 //Providers
 // route.get('/provider',auth,has_permission(['provider.list']), controller('admin/provider/providerList'));
 // route.get('/provider/provider-create',auth,has_permission(['provider.create']), controller('admin/provider/providerCreate'));

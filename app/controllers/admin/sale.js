@@ -56,6 +56,15 @@ module.exports = class sale extends Controller {
             errors: Req.flash('errors')[0],
             old: Req.flash('old')[0]
         }
-        Res.render('admin/sales/point_of_sale',data);
+        Res.redirect(`/admin/point-of-sale`);
+    }
+
+    async saleInfoList(Req, Res) {
+        let data = {
+            Request: Req,
+            errors: Req.flash('errors')[0],
+            old: Req.flash('old')[0]
+        }
+        Res.render('admin/sales/sale_info_list',data);
     }
 }
