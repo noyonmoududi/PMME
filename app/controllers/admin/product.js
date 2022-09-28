@@ -247,12 +247,74 @@ module.exports = class product extends Controller {
     }
 
     async productStockInfo(Req, Res) {
-        let data = {
-            Request: Req,
-            errors: Req.flash('errors')[0],
-            old: Req.flash('old')[0]
+        try{
+            let {page,search,sort,limit} = Req.query;
+            limit =limit || 10;
+            let page_no = (page)?parseInt(page):1;
+            let offset = (page_no-1)*limit;
+            offset = (offset<0)?0:offset;
+
+            let ProductModel = loadModel('ProductModel');
+            let CategoryModel = loadModel('CategoryModel');
+            let InventoryModel = loadModel('InventoryModel');
+            let SaleItemModel = loadModel('SaleItemModel');
+
+            let query_builder = ProductModel.db.from(ProductModel.table)
+            .leftJoin(CategoryModel.table,CategoryModel.table+'.id','=',ProductModel.table+'.category_id');
+
+            if(search) query_builder.where((query)=>{
+                search = search.trim()
+                query.where(ProductModel.table + '.name','like',`%${search}%`)
+                query.orWhere(ProductModel.table + '.identity_code','like',`%${search}%`)
+                query.orWhere(ProductModel.table + '.purchase_price','like',`%${search}%`)
+                query.orWhere(CategoryModel.table + '.name','like',`%${search}%`)
+            });
+            if (sort) {
+                if (sort == 1) query_builder.orderBy(ProductModel.table + '.created_at', 'asc')
+                else if (sort == 4) query_builder.orderBy(ProductModel.table + '.created_at', 'desc')
+                else query_builder.orderBy(ProductModel.table + '.id', 'desc')
+            } else query_builder.orderBy(ProductModel.table + '.id', 'desc')
+
+            let qb = query_builder.clone();
+
+            let rows = await query_builder.limit(limit)
+                        .offset(offset)
+                        .where(ProductModel.table + '.status',1)
+                        .select([
+                            ProductModel.table+'.*',
+                            CategoryModel.table+'.name as category_name',
+                            ProductModel.db.raw(`IFNULL((SELECT SUM(${InventoryModel.table}.quantity) FROM ${InventoryModel.table} WHERE(${InventoryModel.table}.product_id = ${ProductModel.table}.id)),0) AS total_inventory`),
+                            ProductModel.db.raw(`IFNULL((SELECT SUM(${SaleItemModel.table}.quantity) FROM ${SaleItemModel.table} WHERE(${SaleItemModel.table}.product_id = ${ProductModel.table}.id)),0) AS total_sale`),
+                            ProductModel.db.raw(`IFNULL((SELECT SUM(${SaleItemModel.table}.sale_amount) FROM ${SaleItemModel.table} WHERE(${SaleItemModel.table}.product_id = ${ProductModel.table}.id)),0) AS total_sale_value`),
+                            ProductModel.db.raw(`(IFNULL((SELECT SUM(${InventoryModel.table}.quantity) FROM ${InventoryModel.table} WHERE(${InventoryModel.table}.product_id = ${ProductModel.table}.id)),0) - IFNULL((SELECT SUM(${SaleItemModel.table}.quantity) FROM ${SaleItemModel.table} WHERE(${SaleItemModel.table}.product_id = ${ProductModel.table}.id)),0)) as current_stock`),
+                        ]);
+            let total_rows = await qb.count(ProductModel.table + ".id", { as: 'total' }).first();
+            let search_panel = {
+                active:true,
+                limit:true,
+                data: {
+                    sort: {
+                        1: 'Created At - Ascending',
+                        2: 'Created At - Descending',
+                    }
+                }
+            }
+            let data = {
+                Request : Req,
+                rows,
+                sl:offset+1,
+                search_panel
+            }
+            let total = total_rows.total || 0;
+            let Pagination = loadLibrary('pagination');
+            let pagination = new Pagination(total,page_no,'/admin/products-stock',limit,Req.query);
+            data.pagination = pagination.links();
+            Res.render('admin/product/stock_list',data);
+        }catch(err){
+            errorLog(Req,Res,err);
+            console.log(err);
+            Res.render('errors/common_error',{Request:Req});
         }
-        Res.render('admin/product/stock_list',data);
     }
 }
 

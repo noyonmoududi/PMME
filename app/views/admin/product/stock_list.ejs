@@ -7,7 +7,11 @@
         <div class="card">
           <div class="card-header d-flex p-0">
             <h3 class="card-title p-3"><b>Product Stock List</b></h3>
-            
+            <ul class="nav nav-pills ml-auto p-2">
+                <li class="nav-item">
+                  <a class="btn btn-sm btn-info filterbutton" id="filterbutton"><i class="fa fa-solid fa-filter"></i> Filter</a>
+                 
+                </ul>
           </div>
 
           <div class="card-body p-0">
@@ -19,6 +23,7 @@
                     <th>Product Name</th>
                     <th>Identity Code</th>
                     <th>Unit Purchase Price</th>
+                    <th>Total Received Qty</th>
                     <th>Current Stock</th>
                     <th>Current Stock Value</th>
                     <th>Total Sale Qty</th>
@@ -27,7 +32,25 @@
                   </tr>
                 </thead>
                 <tbody>
-                 
+                    <% if(rows.length > 0) { 
+                        rows.forEach(row=>{%>
+                        <tr>
+                            <td><%- sl++ %></td>
+                            <td><%- row.name %></td>
+                            <td><%- row.identity_code %></td>
+                            <td><%- row.purchase_price %></td>
+                            <td><%- row.total_inventory %></td>
+                            <td><%- row.current_stock %></td>
+                            <td><%- (row.current_stock *  row.purchase_price) %></td>
+                            <td><%- row.total_sale %></td>
+                            <td><%- row.total_sale_value %></td>
+                            <td></td>
+                        </tr>
+                    <% }) }else{%>
+                        <tr>
+                            <td colspan="10" class="text-center">No Data Found!</td>
+                        </tr>
+                    <% }%>
                 </tbody>
               </table>
           </div>
@@ -35,7 +58,7 @@
 
           <div class="card-footer clearfix">
             <ul class="pagination pagination-sm m-0 float-right">
-             
+                <li class="page-item"><%- pagination %></li>
             </ul>
           </div>
         </div>

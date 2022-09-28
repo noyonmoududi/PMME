@@ -66,5 +66,6 @@ module.exports = class sale extends Controller {
             old: Req.flash('old')[0]
         }
         Res.render('admin/sales/sale_info_list',data);
+        
     }
 }
