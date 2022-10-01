@@ -86,6 +86,7 @@ module.exports = class sale extends Controller {
                 query.orWhere(SaleInfoModel.table + '.total_payment_amount','like',`%${search}%`)
                 query.orWhere(PaymentTypeModel.table + '.name','like',`%${search}%`)
                 query.orWhere(CustomerModel.table + '.name','like',`%${search}%`)
+                query.orWhere(CustomerModel.table + '.phone','like',`%${search}%`)
             });
             if (sort) {
                 if (sort == 1) query_builder.orderBy(SaleInfoModel.table + '.created_at', 'asc')
@@ -101,6 +102,7 @@ module.exports = class sale extends Controller {
                             SaleInfoModel.table+'.*',
                             PaymentTypeModel.table+'.name as payment_type_name',
                             CustomerModel.table+'.name as customer_name',
+                            CustomerModel.table+'.phone as customer_phone',
                         ]);
             let total_rows = await qb.count(SaleInfoModel.table + ".id", { as: 'total' }).first();
             let search_panel = {

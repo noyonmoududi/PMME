@@ -44,54 +44,56 @@
                     </div>
                     <div class="callout">
                         <div class="row" >
+                            <input type="hidden" id="hidden_customer_id" name="hidden_customer_id"> 
                             <div class="col-sm-3">
                                 <div class="form-group">
                                 <label>Customer Name</label>
-                                <input type="text" class="form-control" placeholder="Customer Name">
+                                <input type="text" class="form-control" id="customer_name" name="customer_name" placeholder="Customer Name">
                                 </div>
                             </div>
                             <div class="col-sm-3">
                                 <div class="form-group">
                                 <label>Customer Phone</label>
-                                <input type="text" class="form-control" min="0" maxlength="11" placeholder="Customer Phone">
+                                <input type="text" class="form-control" id="customer_phone" name="customer_phone" min="0" maxlength="11" placeholder="Customer Phone">
                                 </div>
                             </div>
                             <div class="col-sm-3">
                                 <div class="form-group">
                                 <label>Customer Address</label>
-                                <input type="text" class="form-control" placeholder="Customer Address">
+                                <input type="text" class="form-control" id="customer_address" name="customer_address" placeholder="Customer Address">
                                 </div>
                             </div>
                             <div class="col-sm-3">
                                 <div class="form-group">
                                 <label>Customer NID</label>
-                                <input type="text" class="form-control" placeholder="NID No">
+                                <input type="text" class="form-control" id="customer_NID" name="customer_NID" placeholder="NID No">
                                 </div>
                             </div>
                         </div>
                         <div class="row" >
+                            <input type="hidden" id="hidden_customer_nominee_id" name="hidden_customer_nominee_id"> 
                             <div class="col-sm-3">
                                 <div class="form-group">
                                 <label>Nominee Name</label>
-                                <input type="text" class="form-control" placeholder="Nominee Name">
+                                <input type="text" class="form-control" id="nominee_name" name="nominee_name" placeholder="Nominee Name">
                                 </div>
                             </div>
                             <div class="col-sm-3">
                                 <div class="form-group">
                                 <label>Nominee Phone</label>
-                                <input type="text" class="form-control"  min="0" maxlength="11"  placeholder="Nominee Phone">
+                                <input type="text" class="form-control"  id="nominee_phone" name="nominee_phone"  min="0" maxlength="11"  placeholder="Nominee Phone">
                                 </div>
                             </div>
                             <div class="col-sm-3">
                                 <div class="form-group">
                                 <label>Nominee Address</label>
-                                <input type="text" class="form-control" placeholder="Nominee Address">
+                                <input type="text" class="form-control" id="nominee_address" name="nominee_address" placeholder="Nominee Address">
                                 </div>
                             </div>
                             <div class="col-sm-3">
                                 <div class="form-group">
                                 <label>Nominee NID</label>
-                                <input type="text" class="form-control" placeholder="Nominee NID">
+                                <input type="text" class="form-control" id="nominee_NID" name="nominee_NID" placeholder="Nominee NID">
                                 </div>
                             </div>
                         </div>
@@ -178,7 +180,7 @@
                         <label for="inputEmail3" class="col-sm-5 col-form-label">Payment Type:</label>
                         <div class="col-sm-7">
                             <% if(typeof paymentData != 'undefined') { %>
-                                <select class="form-control" name="brand_id" required>
+                                <select class="form-control" name="brand_id" id="brand_id" required>
                                     <option value="">--Select Payment--</option>
                                     <% if(paymentData.length > 0) { %>
                                     <% for(let key in paymentData){ %>
@@ -298,12 +300,10 @@
         $(document).on('click', 'a.deleteItem', function (e) {
             e.preventDefault();
             var self = $(this);
-            var vat = self.parents('tr').find('#vat').val();
             if (self) {
                 $(this).parents('tr').css("background-color", "#dc143c").fadeOut(800, function () {
                     $(this).remove();
-                    compute(vat);
-                    reset();
+                    compute();
                 });
             } else {
                 //t("delete hoi ni");

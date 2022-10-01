@@ -7,7 +7,10 @@
         <div class="card">
           <div class="card-header d-flex p-0">
             <h3 class="card-title p-3"><b>Sale Info List</b></h3>
-            
+            <ul class="nav nav-pills ml-auto p-2">
+              <li class="nav-item">
+                <a class="btn btn-sm btn-info filterbutton" id="filterbutton"><i class="fa fa-solid fa-filter"></i> Filter</a>
+              </ul>
           </div>
 
           <div class="card-body p-0">
@@ -21,6 +24,7 @@
                     <th>Net Amount</th>
                     <th>Total Payable Amount</th>
                     <th>Customer Name</th>
+                    <th>Customer Phone</th>
                     <th>Payment Type</th>
                     <th>Is Installment</th>
                     <th>Action</th>
@@ -36,6 +40,7 @@
                         <td><%- row.net_amount %></td>
                         <td><%- row.total_payment_amount %></td>
                         <td><%- row.customer_name %></td>
+                        <td><%- row.customer_phone %></td>
                         <td><%- row.payment_type_name %></td>
                         <td>
                           <span class="<%- row.is_installment == 1 ? 'badge bg-success' : 'badge bg-danger' %>">
@@ -46,7 +51,7 @@
                     </tr>
                 <% }) }else{%>
                     <tr>
-                        <td colspan="9" class="text-center">No Data Found!</td>
+                        <td colspan="10" class="text-center">No Data Found!</td>
                     </tr>
                 <% }%>
                 </tbody>
