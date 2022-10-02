@@ -56,6 +56,69 @@ module.exports = class sale extends Controller {
             errors: Req.flash('errors')[0],
             old: Req.flash('old')[0]
         }
+        let sale_info_req_data={};
+        let sale_item_req_data=[];
+        let customer_req_data={};
+        let customer_nominee_req_data={};
+        let customer_due_req_data={};
+        let due_collection_expected_date_req_data=[];
+        let RequestData = loadValidator(Req, Res);
+        
+        let is_installMent = RequestData.post('is_installMent', false, 'is_installMent ').val();
+        let isinstallment = typeof is_installMent !=='undefined' && is_installMent ==='on' ? true:false;
+        let hidden_customer_id = RequestData.post('hidden_customer_id', false, 'hidden_customer_id ').type('int').val();
+        let hidden_customer_nominee_id = RequestData.post('hidden_customer_nominee_id', false, 'hidden_customer_nominee_id ').type('int').val();
+        let installment_duration = RequestData.post('installment_duration', isinstallment, 'installment_duration ').type('int').val();
+        let invoice_no = RequestData.post('invoice_no', true, 'invoice no').type('string').val();
+        let due_amount = RequestData.post('due_amount', isinstallment, 'due_amount ').type('number').val();
+        let net_amount = RequestData.post('net_amount', true, 'net amount ').type('number').val();
+        let item_identity_codes = RequestData.post('tbt_identity_code[]', true, 'Identity Code').val();
+        let item_product_ids = RequestData.post('tbt_product_id[]', true, 'Product ID').val();
+        let item_sale_qty = RequestData.post('tbl_sale_quantity[]', true, 'sale Qty').val();
+        let item_sale_prices = RequestData.post('tbl_sale_price[]', true, 'sale Price').val();
+
+        customer_req_data = {
+            name: RequestData.post('customer_name', true, 'customer name').type('string').val(),
+            address: RequestData.post('customer_address', true, 'customer address').val(),
+            phone: RequestData.post('customer_phone', true, 'customer phone').type('mobile_bd').val(),
+            nid_no: RequestData.post('customer_NID', false, 'customer NID').type('number').val(),
+            created_by:Req.session.user.id,
+            created_at:new Date()
+        };
+        customer_nominee_req_data = {
+            nominee_name: RequestData.post('nominee_name', isinstallment, 'nominee name').type('string').val(),
+            nominee_address: RequestData.post('nominee_address', isinstallment, 'nominee address').val(),
+            nominee_phone: RequestData.post('nominee_phone', isinstallment, 'nominee phone').type('mobile_bd').val(),
+            nominee_nid_no: RequestData.post('nominee_NID', false, 'nominee NID').type('number').val(),
+            created_by:Req.session.user.id,
+            created_at:new Date()
+        };
+        sale_info_req_data = {
+            invoice_no: invoice_no,
+            invoice_item_count: RequestData.post('invoice_item', true, 'invoice item').val(),
+            net_amount: net_amount,
+            down_payment: RequestData.post('down_payment', isinstallment, 'down payment').type('number').val(),
+            total_payment_amount: RequestData.post('total_payable_amount', true, 'total payable amount ').type('number').val(),
+            payment_type_id: RequestData.post('payment_type_id', true, 'payment type ').type('int').val(),
+            is_installment: isinstallment ==true?1:0,
+            created_by:Req.session.user.id,
+            created_at:new Date()
+        };
+        sale_item_req_data = saleItemReqObjGenerate(Req,item_identity_codes,item_product_ids,item_sale_qty,item_sale_prices);
+        customer_due_req_data = {
+            customer_id: 1,
+            sale_info_id: 1,
+            invoice_no: invoice_no,
+            invoice_amount: net_amount,
+            due_amount:due_amount,
+            remaining_amount: due_amount,
+            installment_duration: installment_duration,
+            created_by:Req.session.user.id,
+            created_at:new Date()
+        };
+        due_collection_expected_date_req_data = expectedDateGenerateForDueCollection(Req,installment_duration,1,1);
+       // console.log(customer_req_data,customer_nominee_req_data,sale_info_req_data,sale_item_req_data,customer_due_req_data,due_collection_expected_date_req_data);
+       if (!RequestData.validate()) return false;
         Res.redirect(`/admin/point-of-sale`);
     }
 
@@ -133,4 +196,67 @@ module.exports = class sale extends Controller {
         }
         
     }
+}
+
+function saleItemReqObjGenerate(Req, identityCodes,productIds,saleQtys,salePrices) {
+    let sale_item_req_obj=[];
+    try {
+        if (!Array.isArray(identityCodes) && identityCodes) {
+            let stringValue = identityCodes;
+            identityCodes = [];
+            identityCodes.push(stringValue);
+        }
+        if (!Array.isArray(productIds) && productIds) {
+            let stringValue = productIds;
+            productIds = [];
+            productIds.push(stringValue);
+        }
+        if (!Array.isArray(saleQtys) && saleQtys) {
+            let stringValue = saleQtys;
+            saleQtys = [];
+            saleQtys.push(stringValue);
+        } 
+        if (!Array.isArray(salePrices) && salePrices) {
+            let stringValue = salePrices;
+            salePrices = [];
+            salePrices.push(stringValue);
+        } 
+
+        for (let i = 0; i < identityCodes.length; i++) {
+            const element = identityCodes[i];
+            sale_item_req_obj.push({
+                product_id:productIds[i],
+                identity_code:element,
+                quantity:saleQtys[i],
+                sale_price:salePrices[i],
+                sale_amount:parseInt(saleQtys[i]) * parseFloat(salePrices[i]),
+                created_by:Req.session.user.id,
+            });
+        }
+        return sale_item_req_obj;
+    } catch (error) {
+        console.log(error);
+        return sale_item_req_obj;
+    }
+    
+}
+
+function expectedDateGenerateForDueCollection(Req,installment_duration,saleInfoId,customerId) {
+    let expected_date_req_data=[];
+    try {
+        var today = new Date();
+        for (let i = 1; i <= installment_duration; i++) {
+            expected_date_req_data.push({
+                sale_info_id: saleInfoId,
+                customer_id:customerId,
+                expected_date: new Date(new Date().setDate(today.getDate() + i * 30)),
+                created_by:Req.session.user.id,
+            });
+        }
+        return expected_date_req_data;
+    } catch (error) {
+        console.log(error);
+        return expected_date_req_data;
+    }
+    
 }

@@ -31,6 +31,10 @@
                         <div class="form-group">
                         <label>Invoice No</label>
                         <input type="text" class="form-control" id="invoice_no" name="invoice_no" value="<%- (typeof invoiceNo != 'undefined') ? invoiceNo : ''; %>" readonly>
+                        <p class="text-danger">
+                            <%= (typeof errors != 'undefined' &&
+                            errors.invoice_no)?errors.invoice_no:''; %>
+                          </p>
                         </div>
                         </div>
                         <div class="col-sm-4">
@@ -49,24 +53,40 @@
                                 <div class="form-group">
                                 <label>Customer Name</label>
                                 <input type="text" class="form-control" id="customer_name" name="customer_name" placeholder="Customer Name">
+                                <p class="text-danger">
+                                    <%= (typeof errors != 'undefined' &&
+                                    errors.customer_name)?errors.customer_name:''; %>
+                                  </p>
                                 </div>
                             </div>
                             <div class="col-sm-3">
                                 <div class="form-group">
                                 <label>Customer Phone</label>
                                 <input type="text" class="form-control" id="customer_phone" name="customer_phone" min="0" maxlength="11" placeholder="Customer Phone">
+                                <p class="text-danger">
+                                    <%= (typeof errors != 'undefined' &&
+                                    errors.customer_phone)?errors.customer_phone:''; %>
+                                  </p>
                                 </div>
                             </div>
                             <div class="col-sm-3">
                                 <div class="form-group">
                                 <label>Customer Address</label>
                                 <input type="text" class="form-control" id="customer_address" name="customer_address" placeholder="Customer Address">
+                                <p class="text-danger">
+                                    <%= (typeof errors != 'undefined' &&
+                                    errors.customer_address)?errors.customer_address:''; %>
+                                  </p>
                                 </div>
                             </div>
                             <div class="col-sm-3">
                                 <div class="form-group">
                                 <label>Customer NID</label>
                                 <input type="text" class="form-control" id="customer_NID" name="customer_NID" placeholder="NID No">
+                                <p class="text-danger">
+                                    <%= (typeof errors != 'undefined' &&
+                                    errors.customer_NID)?errors.customer_NID:''; %>
+                                  </p>
                                 </div>
                             </div>
                         </div>
@@ -76,24 +96,40 @@
                                 <div class="form-group">
                                 <label>Nominee Name</label>
                                 <input type="text" class="form-control" id="nominee_name" name="nominee_name" placeholder="Nominee Name">
+                                <p class="text-danger">
+                                    <%= (typeof errors != 'undefined' &&
+                                    errors.nominee_name)?errors.nominee_name:''; %>
+                                  </p>
                                 </div>
                             </div>
                             <div class="col-sm-3">
                                 <div class="form-group">
                                 <label>Nominee Phone</label>
                                 <input type="text" class="form-control"  id="nominee_phone" name="nominee_phone"  min="0" maxlength="11"  placeholder="Nominee Phone">
+                                <p class="text-danger">
+                                    <%= (typeof errors != 'undefined' &&
+                                    errors.nominee_phone)?errors.nominee_phone:''; %>
+                                  </p>
                                 </div>
                             </div>
                             <div class="col-sm-3">
                                 <div class="form-group">
                                 <label>Nominee Address</label>
                                 <input type="text" class="form-control" id="nominee_address" name="nominee_address" placeholder="Nominee Address">
+                                <p class="text-danger">
+                                    <%= (typeof errors != 'undefined' &&
+                                    errors.nominee_address)?errors.nominee_address:''; %>
+                                  </p>
                                 </div>
                             </div>
                             <div class="col-sm-3">
                                 <div class="form-group">
                                 <label>Nominee NID</label>
                                 <input type="text" class="form-control" id="nominee_NID" name="nominee_NID" placeholder="Nominee NID">
+                                <p class="text-danger">
+                                    <%= (typeof errors != 'undefined' &&
+                                    errors.nominee_NID)?errors.nominee_NID:''; %>
+                                  </p>
                                 </div>
                             </div>
                         </div>
@@ -128,19 +164,27 @@
                         <label for="inputEmail3" class="col-sm-5 col-form-label">Net Amount:</label>
                         <div class="col-sm-7">
                         <input type="number" class="form-control" readonly id="net_amount" name="net_amount" placeholder="">
+                        <p class="text-danger">
+                            <%= (typeof errors != 'undefined' &&
+                            errors.net_amount)?errors.net_amount:''; %>
+                          </p>
                         </div>
                     </div>
                     <div class="form-group row">
                         <label for="inputEmail3" class="col-sm-5 col-form-label">Total Item:</label>
                         <div class="col-sm-7">
                         <input type="text" class="form-control" id="invoice_item" name="invoice_item" placeholder="" readonly>
+                        <p class="text-danger">
+                            <%= (typeof errors != 'undefined' &&
+                            errors.invoice_item)?errors.invoice_item:''; %>
+                          </p>
                         </div>
                     </div>
                     <div class="form-group row">
                         <label for="inputEmail3" class="col-sm-5 col-form-label"></label>
                         <div class="col-sm-7">
                             <div class="icheck-success d-inline">
-                                <input type="checkbox" id="is_installMent">
+                                <input type="checkbox" id="is_installMent" name="is_installMent">
                                 <label for="is_installMent">
                                     Is Installment
                                 </label>
@@ -151,10 +195,14 @@
                         <label for="inputEmail3" class="col-sm-5 col-form-label">Installment Duration:</label>
                         <div class="col-sm-7">
                             <div class="input-group mb-3">
-                                <input type="number" name="" id=""  min="0" class="form-control rounded-0">
+                                <input type="number" name="installment_duration" id="installment_duration"  min="0" class="form-control rounded-0">
                                 <span class="input-group-append">
                                 <button type="button" class="btn btn-info btn-flat">Month</button>
                                 </span>
+                                <p class="text-danger">
+                                    <%= (typeof errors != 'undefined' &&
+                                    errors.installment_duration)?errors.installment_duration:''; %>
+                                  </p>
                             </div>
                         </div>
                     </div>
@@ -162,25 +210,37 @@
                         <label for="inputEmail3" class="col-sm-5 col-form-label">Down Payment:</label>
                         <div class="col-sm-7">
                         <input type="number" class="form-control" min="0" id="down_payment" name="down_payment" placeholder="">
+                        <p class="text-danger">
+                            <%= (typeof errors != 'undefined' &&
+                            errors.down_payment)?errors.down_payment:''; %>
+                          </p>
                         </div>
                     </div>
                     <div class="form-group row display" id="divDueAmt">
                         <label for="inputEmail3" class="col-sm-5 col-form-label">Due Amount:</label>
                         <div class="col-sm-7">
                         <input type="number" class="form-control" min="0" id="due_amount" name="due_amount" placeholder="" readonly>
+                        <p class="text-danger">
+                            <%= (typeof errors != 'undefined' &&
+                            errors.due_amount)?errors.due_amount:''; %>
+                          </p>
                         </div>
                     </div>
                     <div class="form-group row">
                         <label for="inputEmail3" class="col-sm-5 col-form-label">Total Payable Amount:</label>
                         <div class="col-sm-7">
-                        <input type="number" class="form-control"  min="0" id="total_payable_amount" name="total_payable_amount" placeholder="">
+                        <input type="number" class="form-control"  min="0" id="total_payable_amount" name="total_payable_amount" placeholder="" readonly>
+                        <p class="text-danger">
+                            <%= (typeof errors != 'undefined' &&
+                            errors.total_payable_amount)?errors.total_payable_amount:''; %>
+                          </p>
                         </div>
                     </div>
                     <div class="form-group row">
                         <label for="inputEmail3" class="col-sm-5 col-form-label">Payment Type:</label>
                         <div class="col-sm-7">
                             <% if(typeof paymentData != 'undefined') { %>
-                                <select class="form-control" name="brand_id" id="brand_id" required>
+                                <select class="form-control" name="payment_type_id" id="payment_type_id" required>
                                     <option value="">--Select Payment--</option>
                                     <% if(paymentData.length > 0) { %>
                                     <% for(let key in paymentData){ %>
@@ -221,6 +281,17 @@
 
 <script>
      $(function () {
+        let isinstallMent = "<%- (typeof old != 'undefined') ? old.is_installMent : ''; %>";
+        if (isinstallMent) {
+               document.getElementById("is_installMent").checked = true;
+                $("#divDuration").removeClass("display");
+                $("#divDownPayment").removeClass("display");
+                $("#divDueAmt").removeClass("display");
+        }else{
+                $("#divDuration").addClass("display");
+                $("#divDownPayment").addClass("display");
+                $("#divDueAmt").addClass("display");
+        }
         $("#expand_bar").click();
         $('#invoiceDate').datepicker({
             format: "yyyy-mm-dd",
@@ -258,6 +329,7 @@
                             if (!isNew) {
                                 tableRow = `<tr>
                                         <td>${rowCount +1}</td>
+                                        <td style='display:none'><input type="number" class="form-control" id="tbt_product_id" name="tbt_product_id[]" value="${response.id}" readonly></td>
                                         <td><input type="text" class="form-control" id="tbt_identity_code" name="tbt_identity_code[]" value="${response.identity_code}" readonly></td>
                                         <td><input type="text" class="form-control" id="tbl_product_name" name="tbl_product_name[]" value="${response.name}" readonly></td>
                                         <td><input type="text" class="form-control" id="tbl_purchase_price" name="tbl_purchase_price[]" value="${response.purchase_price}" readonly></td>

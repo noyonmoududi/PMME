@@ -5,8 +5,6 @@ module.exports = class customer extends Controller {
         super();
     }
     async dueCustomerList(Req, Res) {
-        // var today = new Date();
-        // var priorDate = new Date(new Date().setDate(today.getDate() + 60));
         try{
             let {page,search,sort,limit} = Req.query;
             limit =limit || 10;
