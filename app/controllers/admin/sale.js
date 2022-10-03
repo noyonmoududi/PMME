@@ -77,6 +77,7 @@ module.exports = class sale extends Controller {
         let invoice_no = RequestData.post('invoice_no', true, 'invoice no').type('string').val();
         let due_amount = RequestData.post('due_amount', isinstallment, 'due_amount ').type('number').val();
         let net_amount = RequestData.post('net_amount', true, 'net amount ').type('number').val();
+        let down_payment_value = RequestData.post('down_payment', isinstallment, 'down payment').type('number').val();
         let item_identity_codes = RequestData.post('tbt_identity_code[]', true, 'Identity Code').val();
         let item_product_ids = RequestData.post('tbt_product_id[]', true, 'Product ID').val();
         let item_sale_qty = RequestData.post('tbl_sale_quantity[]', true, 'sale Qty').val();
@@ -109,7 +110,7 @@ module.exports = class sale extends Controller {
             invoice_no: invoice_no,
             invoice_item_count: RequestData.post('invoice_item', true, 'invoice item').val(),
             net_amount: net_amount,
-            down_payment: RequestData.post('down_payment', isinstallment, 'down payment').type('number').val(),
+            down_payment: (down_payment_value.trim().length !== 0) ? down_payment_value:0.00,
             total_payment_amount: RequestData.post('total_payable_amount', true, 'total payable amount ').type('number').val(),
             payment_type_id: RequestData.post('payment_type_id', true, 'payment type ').type('int').val(),
             is_installment: isinstallment ==true?1:0,
@@ -134,18 +135,20 @@ module.exports = class sale extends Controller {
                     created_by:Req.session.user.id,
                     created_at:new Date()
                 };
-                let saveCustomerDue = await CustomerDueModel.saveCustomerDueData(sale_item_req_data);
+                let saveCustomerDue = await CustomerDueModel.saveCustomerDueData(customer_due_req_data);
                 due_collection_expected_date_req_data = expectedDateGenerateForDueCollection(Req,installment_duration,saveSaleInfo,saveCustomer);
-                let saveCustomerDueCollDates = await ExpectedDueCollectionDatesModel.saveCustomerDueCollectionDate(sale_item_req_data);
+                let saveCustomerDueCollDates = await ExpectedDueCollectionDatesModel.saveCustomerDueCollectionDate(due_collection_expected_date_req_data);
             }
             await ActivityLogModel.saveLogData(Req,Res,'Sale has been created by',SaleInfoModel.table,saveSaleInfo);
-            Req.session.flash_toastr_success = 'Sale Created successfully!';
+            Req.session.flash_toastr_success = `Data saved successfully! Invoice NO: ${invoice_no}`;
         }
         Res.redirect(`/admin/point-of-sale`);
         } catch (error) {
             errorLog(Req,Res,error);
             console.log(error);
-            Res.render('errors/common_error',{Request:Req});
+            Req.session.flash_toastr_error = 'Something Went Wrong!.';
+           // Res.render('errors/common_error',{Request:Req});
+           return back(Req, Res);
         }
     }
 

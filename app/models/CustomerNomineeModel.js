@@ -16,4 +16,14 @@ module.exports = class CustomerNomineeModel extends Model {
             return Promise.reject(error);
         }
     }
+
+    async getCustomerNomineeInfoByPhone(phone) {
+        try {
+            let result = await this.db(this.table).where({nominee_phone:phone}).select().first();
+            return result;
+        }
+        catch (error) {
+            return Promise.reject(error);
+        }
+    }
 }

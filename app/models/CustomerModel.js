@@ -16,4 +16,13 @@ module.exports = class CustomerModel extends Model {
             return Promise.reject(error);
         }
     }
+    async getCustomerInfoByPhone(phone) {
+        try {
+            let result = await this.db(this.table).where({phone}).select().first();
+            return result;
+        }
+        catch (error) {
+            return Promise.reject(error);
+        }
+    }
 }

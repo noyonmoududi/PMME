@@ -75,4 +75,37 @@ module.exports = class customer extends Controller {
             Res.render('errors/common_error',{Request:Req});
         }
     }
+
+    async customerInfoByMobile(Req, Res) {
+        try {
+            let mobile = Req.params["mobile"];
+            let CustomerModel = loadModel('CustomerModel');
+            let result = await CustomerModel.getCustomerInfoByPhone(mobile);
+            if (result != 'undefined') {
+                Res.send(result);
+            }else{
+                Res.send('error');
+            }
+        } catch (error) {
+            errorLog(Req,Res,error);
+            console.log(error);
+            Res.send("error");
+        }
+    }
+    async customernomineeInfoByMobile(Req, Res) {
+        try {
+            let mobile = Req.params["mobile"];
+            let CustomerNomineeModel = loadModel('CustomerNomineeModel');
+            let result = await CustomerNomineeModel.getCustomerNomineeInfoByPhone(mobile);
+            if (result != 'undefined') {
+                Res.send(result);
+            }else{
+                Res.send('error');
+            }
+        } catch (error) {
+            errorLog(Req,Res,error);
+            console.log(error);
+            Res.send("error");
+        }
+    }
 }

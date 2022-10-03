@@ -74,6 +74,8 @@ route.post('/inventory/:product_id/:identity_code/inventory-save',auth, has_perm
 
  //Customers
  route.get('/customer-due',auth,has_permission(['customer.due.list']), controller('admin/customer/dueCustomerList'));
+ route.get('/customer-info-by-mobile/:mobile',auth, controller('admin/customer/customerInfoByMobile'));
+ route.get('/customer-nominee-info-by-mobile/:mobile',auth, controller('admin/customer/customernomineeInfoByMobile'));
 
 //Providers
 // route.get('/provider',auth,has_permission(['provider.list']), controller('admin/provider/providerList'));

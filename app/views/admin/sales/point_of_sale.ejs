@@ -352,6 +352,49 @@
                         $(this).val('');
                     });
          });
+
+         $('#customer_phone').change(function(e) {
+            e.preventDefault();
+            let customerPhone = $(this).val();
+            let checkUrl = '/admin/customer-info-by-mobile/'+customerPhone;
+            return $.ajax({
+                        url: checkUrl,
+                        dataType: 'json',
+                        method: 'get'
+                    }).done(function (response) {
+                        if (response != 'error') {
+                           $("#hidden_customer_id").val(response.id);
+                           $("#customer_name").val(response.name);
+                           $("#customer_phone").val(response.phone);
+                           $("#customer_address").val(response.address);
+                           $("#customer_NID").val(response.nid_no);
+                        }
+                    }).fail(function(){
+                        alert('Something went wrong.');
+                    });
+            });
+
+            $('#nominee_phone').change(function(e) {
+            e.preventDefault();
+            let nomineePhone = $(this).val();
+            let checkUrl = '/admin/customer-nominee-info-by-mobile/'+nomineePhone;
+            return $.ajax({
+                        url: checkUrl,
+                        dataType: 'json',
+                        method: 'get'
+                    }).done(function (response) {
+                        if (response != 'error') {
+                           $("#hidden_customer_nominee_id").val(response.id);
+                           $("#nominee_name").val(response.nominee_name);
+                           $("#nominee_phone").val(response.nominee_phone);
+                           $("#nominee_address").val(response.nominee_address);
+                           $("#nominee_NID").val(response.nominee_nid_no);
+                        }
+                    }).fail(function(){
+                        alert('Something went wrong.');
+                    });
+            });
+
          $("#sale_item_table_body").on('keyup', '.tbl_sale_price', function () {
              var thisRow = $(this);
              rowDataCalculation(thisRow);
