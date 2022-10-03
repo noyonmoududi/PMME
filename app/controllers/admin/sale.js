@@ -100,11 +100,12 @@ module.exports = class sale extends Controller {
             created_at:new Date()
         };
 
-       if (!RequestData.validate()) return false;
-        let saveCustomer = await CustomerModel.saveCustomerData(customer_req_data);
+        if (!RequestData.validate()) return false;
         let saveCustomerNominee = null;
+        let saveCustomer = null;
+        saveCustomer = hidden_customer_id.trim().length === 0 ? await CustomerModel.saveCustomerData(customer_req_data): hidden_customer_id;
         if (isinstallment) {
-            saveCustomerNominee = await CustomerNomineeModel.saveCustomerNomineeData(customer_nominee_req_data);
+            saveCustomerNominee =hidden_customer_nominee_id.trim().length === 0? await CustomerNomineeModel.saveCustomerNomineeData(customer_nominee_req_data):hidden_customer_nominee_id;
         }
         sale_info_req_data = {
             invoice_no: invoice_no,
