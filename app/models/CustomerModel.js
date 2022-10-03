@@ -6,4 +6,14 @@ module.exports = class CustomerModel extends Model {
         this.table = 'customers';
         this.primaryKey = 'id';
     }
+    async saveCustomerData(req_obj) {
+        try {
+            let insertData = await this.db(this.table).insert({ ...req_obj });
+            let insertedId = insertData[0];
+            return insertedId;
+        }
+        catch (error) {
+            return Promise.reject(error);
+        }
+    }
 }

@@ -1,12 +1,12 @@
 const Model = loadCore('model');
 
-module.exports = class CustomerDueModel extends Model {
+module.exports = class CustomerNomineeModel extends Model {
     constructor() {
         super();
-        this.table = 'customers_due';
+        this.table = 'customer_nominees';
         this.primaryKey = 'id';
     }
-    async saveCustomerDueData(req_obj) {
+    async saveCustomerNomineeData(req_obj) {
         try {
             let insertData = await this.db(this.table).insert({ ...req_obj });
             let insertedId = insertData[0];

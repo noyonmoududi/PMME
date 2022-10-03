@@ -51,17 +51,22 @@ module.exports = class sale extends Controller {
     }
 
     async saveSaleData(Req, Res) {
-        let data = {
-            Request: Req,
-            errors: Req.flash('errors')[0],
-            old: Req.flash('old')[0]
-        }
+        try {
         let sale_info_req_data={};
         let sale_item_req_data=[];
         let customer_req_data={};
         let customer_nominee_req_data={};
         let customer_due_req_data={};
         let due_collection_expected_date_req_data=[];
+
+        let ActivityLogModel = loadModel('ActivityLogModel');
+        let SaleInfoModel = loadModel('SaleInfoModel');
+        let SaleItemModel = loadModel('SaleItemModel');
+        let CustomerModel = loadModel('CustomerModel');
+        let CustomerNomineeModel = loadModel('CustomerNomineeModel');
+        let CustomerDueModel = loadModel('CustomerDueModel');
+        let ExpectedDueCollectionDatesModel = loadModel('ExpectedDueCollectionDatesModel');
+
         let RequestData = loadValidator(Req, Res);
         
         let is_installMent = RequestData.post('is_installMent', false, 'is_installMent ').val();
@@ -93,6 +98,13 @@ module.exports = class sale extends Controller {
             created_by:Req.session.user.id,
             created_at:new Date()
         };
+
+       if (!RequestData.validate()) return false;
+        let saveCustomer = await CustomerModel.saveCustomerData(customer_req_data);
+        let saveCustomerNominee = null;
+        if (isinstallment) {
+            saveCustomerNominee = await CustomerNomineeModel.saveCustomerNomineeData(customer_nominee_req_data);
+        }
         sale_info_req_data = {
             invoice_no: invoice_no,
             invoice_item_count: RequestData.post('invoice_item', true, 'invoice item').val(),
@@ -102,24 +114,39 @@ module.exports = class sale extends Controller {
             payment_type_id: RequestData.post('payment_type_id', true, 'payment type ').type('int').val(),
             is_installment: isinstallment ==true?1:0,
             created_by:Req.session.user.id,
+            customer_id: saveCustomer,
+            customer_nominee_id: saveCustomerNominee,
             created_at:new Date()
         };
-        sale_item_req_data = saleItemReqObjGenerate(Req,item_identity_codes,item_product_ids,item_sale_qty,item_sale_prices);
-        customer_due_req_data = {
-            customer_id: 1,
-            sale_info_id: 1,
-            invoice_no: invoice_no,
-            invoice_amount: net_amount,
-            due_amount:due_amount,
-            remaining_amount: due_amount,
-            installment_duration: installment_duration,
-            created_by:Req.session.user.id,
-            created_at:new Date()
-        };
-        due_collection_expected_date_req_data = expectedDateGenerateForDueCollection(Req,installment_duration,1,1);
-       // console.log(customer_req_data,customer_nominee_req_data,sale_info_req_data,sale_item_req_data,customer_due_req_data,due_collection_expected_date_req_data);
-       if (!RequestData.validate()) return false;
+        let saveSaleInfo = await SaleInfoModel.saveSaleInfoData(sale_info_req_data);
+        if (saveSaleInfo) {
+            sale_item_req_data = saleItemReqObjGenerate(Req,item_identity_codes,item_product_ids,item_sale_qty,item_sale_prices,saveSaleInfo);
+            let saveSaleItem = await SaleItemModel.saveSaleItemData(sale_item_req_data);
+            if (isinstallment) {
+                customer_due_req_data = {
+                    customer_id: saveCustomer,
+                    sale_info_id: saveSaleInfo,
+                    invoice_no: invoice_no,
+                    invoice_amount: net_amount,
+                    due_amount:due_amount,
+                    remaining_amount: due_amount,
+                    installment_duration: installment_duration,
+                    created_by:Req.session.user.id,
+                    created_at:new Date()
+                };
+                let saveCustomerDue = await CustomerDueModel.saveCustomerDueData(sale_item_req_data);
+                due_collection_expected_date_req_data = expectedDateGenerateForDueCollection(Req,installment_duration,saveSaleInfo,saveCustomer);
+                let saveCustomerDueCollDates = await ExpectedDueCollectionDatesModel.saveCustomerDueCollectionDate(sale_item_req_data);
+            }
+            await ActivityLogModel.saveLogData(Req,Res,'Sale has been created by',SaleInfoModel.table,saveSaleInfo);
+            Req.session.flash_toastr_success = 'Sale Created successfully!';
+        }
         Res.redirect(`/admin/point-of-sale`);
+        } catch (error) {
+            errorLog(Req,Res,error);
+            console.log(error);
+            Res.render('errors/common_error',{Request:Req});
+        }
     }
 
     async saleInfoList(Req, Res) {
@@ -198,7 +225,7 @@ module.exports = class sale extends Controller {
     }
 }
 
-function saleItemReqObjGenerate(Req, identityCodes,productIds,saleQtys,salePrices) {
+function saleItemReqObjGenerate(Req, identityCodes,productIds,saleQtys,salePrices,saleInfoId) {
     let sale_item_req_obj=[];
     try {
         if (!Array.isArray(identityCodes) && identityCodes) {
@@ -225,6 +252,7 @@ function saleItemReqObjGenerate(Req, identityCodes,productIds,saleQtys,salePrice
         for (let i = 0; i < identityCodes.length; i++) {
             const element = identityCodes[i];
             sale_item_req_obj.push({
+                sale_info_id:saleInfoId,
                 product_id:productIds[i],
                 identity_code:element,
                 quantity:saleQtys[i],
