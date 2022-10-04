@@ -19,8 +19,9 @@ module.exports = class sale extends Controller {
             let payments = await PaymentTypeModel.getAllpayment();
             data.paymentData = payments;
             data.invoiceNo = invoiceNum;
-            data.page_title = 'Point Of Sale';
+            data.page_title = 'Point Of Sale'
             Res.render('admin/sales/point_of_sale',data);
+            
         } catch (error) {
             errorLog(Req,Res,error);
             console.log(error);
@@ -227,6 +228,112 @@ module.exports = class sale extends Controller {
         }
         
     }
+
+    
+    async invoiceDownload(Req, Res) {
+        const fs = require("fs");
+        //let invoiceNum = Req.params["invoiceNum"];
+        let invoiceNum = '2022104135355ARGX';
+        var basePath = `./public/file_storage/`;
+        var fullPath = `./public/file_storage/invoices/`;
+          // check if directory exists
+        if (!fs.existsSync(basePath)) {
+            // if not create directory
+            fs.mkdirSync(basePath);
+        }
+        if (!fs.existsSync(fullPath)) {
+        // if not create directory
+            fs.mkdirSync(fullPath);
+        }
+        // let DocModel = loadModel('DocModel');
+
+        // let result = await DocModel.db(DocModel.table)
+        // .where(DocModel.table+'.uuid',uuid).select([
+        //     DocModel.table+'.*'
+        // ]).first();
+
+        const { createInvoice } = loadLibrary('createinvoice');
+        const invoice = {
+            shipping: {
+                name: "Nure Ala Moududi",
+                phone:'0170995314',
+                address: "1234 Main Street",
+                city: "Bogura",
+                state: "Bogura",
+                country: "Bangladesh",
+                postal_code: 5800
+            },
+            items: [
+            {
+                identity_code:"5tgv",
+                item: "TC 100",
+                quantity: 2,
+                amount: 6000
+            },
+            {
+                identity_code:"6tgv",
+                item: "USB_EXT",
+                quantity: 1,
+                amount: 2000
+            },
+            {
+                identity_code:"6tgv",
+                item: "USB_EXT",
+                quantity: 1,
+                amount: 2000
+            }
+            ,
+            {
+                identity_code:"6tgv",
+                item: "USB_EXT",
+                quantity: 1,
+                amount: 2000
+            }
+            ,
+            {
+                identity_code:"6tgv",
+                item: "USB_EXT",
+                quantity: 1,
+                amount: 2000
+            }
+            ,
+            {
+                identity_code:"6tgv",
+                item: "USB_EXT",
+                quantity: 1,
+                amount: 2000
+            }
+            ,
+            {
+                identity_code:"6tgv",
+                item: "USB_EXT",
+                quantity: 1,
+                amount: 2000
+            }
+            ,
+            {
+                identity_code:"6tgv",
+                item: "USB_EXT",
+                quantity: 1,
+                amount: 2000
+            }
+            ,
+            {
+                identity_code:"6tgv",
+                item: "USB_EXT",
+                quantity: 1,
+                amount: 2000
+            }
+            
+            ],
+            subtotal: 8000,
+            paid: 8000,
+            invoice_nr: invoiceNum,
+        };
+        let fileName = fullPath +invoiceNum +'.pdf';
+        createInvoice(invoice, fileName);
+        return back(Req,Res);
+    }
 }
 
 function saleItemReqObjGenerate(Req, identityCodes,productIds,saleQtys,salePrices,saleInfoId) {
@@ -292,3 +399,4 @@ function expectedDateGenerateForDueCollection(Req,installment_duration,saleInfoI
     }
     
 }
+

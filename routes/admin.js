@@ -71,6 +71,7 @@ route.post('/inventory/:product_id/:identity_code/inventory-save',auth, has_perm
  route.get('/sale-info-list',auth,has_permission(['sale.info.list']), controller('admin/sale/saleInfoList'));
  route.get('/get-product-details/:identity_code',auth,has_permission(['sale.create']), controller('admin/sale/getProductDetailsWithStock'));
  route.post('/point-of-sale/save',auth,has_permission(['sale.create']), controller('admin/sale/saveSaleData'));
+ route.get('/invoice-download/:invoiceNum', auth, controller('admin/sale/invoiceDownload'));
 
  //Customers
  route.get('/customer-due',auth,has_permission(['customer.due.list']), controller('admin/customer/dueCustomerList'));
