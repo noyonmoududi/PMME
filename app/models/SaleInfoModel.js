@@ -27,4 +27,15 @@ module.exports = class SaleInfoModel extends Model {
             return Promise.reject(error);
         }
     }
+    async getSaleInfoByInvoiceNUm(invoiceNum) {
+        try {
+            let row = await this.db(this.table)
+            .where(this.table+'.invoice_no',invoiceNum)
+            .select().first();
+            return row;
+        }
+        catch (error) {
+            return Promise.reject(error);
+        }
+    }
 }

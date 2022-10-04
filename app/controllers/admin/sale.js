@@ -232,8 +232,9 @@ module.exports = class sale extends Controller {
     
     async invoiceDownload(Req, Res) {
         const fs = require("fs");
-        //let invoiceNum = Req.params["invoiceNum"];
-        let invoiceNum = '2022104135355ARGX';
+        const invoice = {};
+        try {
+            let invoiceNum = Req.params["invoiceNum"];
         var basePath = `./public/file_storage/`;
         var fullPath = `./public/file_storage/invoices/`;
           // check if directory exists
@@ -245,94 +246,106 @@ module.exports = class sale extends Controller {
         // if not create directory
             fs.mkdirSync(fullPath);
         }
-        // let DocModel = loadModel('DocModel');
+        let SaleInfoModel = loadModel('SaleInfoModel');
+        let SaleItemModel = loadModel('SaleItemModel');
+        let CustomerModel = loadModel('CustomerModel');
 
-        // let result = await DocModel.db(DocModel.table)
-        // .where(DocModel.table+'.uuid',uuid).select([
-        //     DocModel.table+'.*'
-        // ]).first();
+        let saleInfo = await SaleInfoModel.getSaleInfoByInvoiceNUm(invoiceNum);
+        if (saleInfo) {
+            let saleItems = await SaleItemModel.getSaleItemsBySaleInfo(saleInfo.id);
+            let customerInfo = await CustomerModel.getCustomerInfoByid(saleInfo.customer_id);
+            invoice.shipping=customerInfo;
+            invoice.items=saleItems;
+            invoice.saleInfo=saleInfo;
+        }
 
         const { createInvoice } = loadLibrary('createinvoice');
-        const invoice = {
-            shipping: {
-                name: "Nure Ala Moududi",
-                phone:'0170995314',
-                address: "1234 Main Street",
-                city: "Bogura",
-                state: "Bogura",
-                country: "Bangladesh",
-                postal_code: 5800
-            },
-            items: [
-            {
-                identity_code:"5tgv",
-                item: "TC 100",
-                quantity: 2,
-                amount: 6000
-            },
-            {
-                identity_code:"6tgv",
-                item: "USB_EXT",
-                quantity: 1,
-                amount: 2000
-            },
-            {
-                identity_code:"6tgv",
-                item: "USB_EXT",
-                quantity: 1,
-                amount: 2000
-            }
-            ,
-            {
-                identity_code:"6tgv",
-                item: "USB_EXT",
-                quantity: 1,
-                amount: 2000
-            }
-            ,
-            {
-                identity_code:"6tgv",
-                item: "USB_EXT",
-                quantity: 1,
-                amount: 2000
-            }
-            ,
-            {
-                identity_code:"6tgv",
-                item: "USB_EXT",
-                quantity: 1,
-                amount: 2000
-            }
-            ,
-            {
-                identity_code:"6tgv",
-                item: "USB_EXT",
-                quantity: 1,
-                amount: 2000
-            }
-            ,
-            {
-                identity_code:"6tgv",
-                item: "USB_EXT",
-                quantity: 1,
-                amount: 2000
-            }
-            ,
-            {
-                identity_code:"6tgv",
-                item: "USB_EXT",
-                quantity: 1,
-                amount: 2000
-            }
+        // const invoice = {
+        //     shipping: {
+        //         name: "Nure Ala Moududi",
+        //         phone:'0170995314',
+        //         address: "1234 Main Street",
+        //         city: "Bogura",
+        //         state: "Bogura",
+        //         country: "Bangladesh",
+        //         postal_code: 5800
+        //     },
+        //     items: [
+        //     {
+        //         identity_code:"5tgv",
+        //         item: "TC 100",
+        //         quantity: 2,
+        //         amount: 6000
+        //     },
+        //     {
+        //         identity_code:"6tgv",
+        //         item: "USB_EXT",
+        //         quantity: 1,
+        //         amount: 2000
+        //     },
+        //     {
+        //         identity_code:"6tgv",
+        //         item: "USB_EXT",
+        //         quantity: 1,
+        //         amount: 2000
+        //     }
+        //     ,
+        //     {
+        //         identity_code:"6tgv",
+        //         item: "USB_EXT",
+        //         quantity: 1,
+        //         amount: 2000
+        //     }
+        //     ,
+        //     {
+        //         identity_code:"6tgv",
+        //         item: "USB_EXT",
+        //         quantity: 1,
+        //         amount: 2000
+        //     }
+        //     ,
+        //     {
+        //         identity_code:"6tgv",
+        //         item: "USB_EXT",
+        //         quantity: 1,
+        //         amount: 2000
+        //     }
+        //     ,
+        //     {
+        //         identity_code:"6tgv",
+        //         item: "USB_EXT",
+        //         quantity: 1,
+        //         amount: 2000
+        //     }
+        //     ,
+        //     {
+        //         identity_code:"6tgv",
+        //         item: "USB_EXT",
+        //         quantity: 1,
+        //         amount: 2000
+        //     }
+        //     ,
+        //     {
+        //         identity_code:"6tgv",
+        //         item: "USB_EXT",
+        //         quantity: 1,
+        //         amount: 2000
+        //     }
             
-            ],
-            subtotal: 8000,
-            paid: 8000,
-            invoice_nr: invoiceNum,
-        };
-        let fileName = fullPath +invoiceNum +'.pdf';
-        createInvoice(invoice, fileName);
-        return back(Req,Res);
+        //     ],
+        //     subtotal: 8000,
+        //     paid: 8000,
+        //     invoice_nr: invoiceNum,
+        // };
+            let fileName = fullPath +invoiceNum +'.pdf';
+            createInvoice(invoice, fileName);
+            return back(Req,Res);
+        } catch (error) {
+            errorLog(Req,Res,error);
+            Req.session.flash_toastr_error = 'Something Went Wrong!.';
+           return back(Req, Res);
+        }
+        
     }
 }
 

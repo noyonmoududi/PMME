@@ -16,4 +16,15 @@ module.exports = class SaleItemModel extends Model {
             return Promise.reject(error);
         }
     }
+    async getSaleItemsBySaleInfo(sale_info_id) {
+        try {
+            let rows = await this.db(this.table)
+            .where(this.table+'.sale_info_id',sale_info_id)
+            .select();
+            return rows;
+        }
+        catch (error) {
+            return Promise.reject(error);
+        }
+    }
 }
