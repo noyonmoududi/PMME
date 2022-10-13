@@ -40,31 +40,35 @@ function generateCustomerInformation(doc, invoice) {
     .fontSize(10)
     .text("Invoice Number:", 50, customerInformationTop)
     .font("Helvetica-Bold")
-    .text(invoice.invoice_nr, 150, customerInformationTop)
+    .text(invoice.saleInfo.invoice_no, 150, customerInformationTop)
     .font("Helvetica")
-    .text("Invoice Date:", 50, customerInformationTop + 15)
-    .text(formatDate(new Date()), 150, customerInformationTop + 15)
-    .text("Balance Due:", 50, customerInformationTop + 30)
+    .text("Invoice Date:", 50, customerInformationTop + 12)
+    .text(formatDate(new Date()), 150, customerInformationTop + 12)
+    .text("Invoice Type:", 50, customerInformationTop + 25)
+    .font("Helvetica")
+    .text("Installment", 150, customerInformationTop + 25)
+    .font("Helvetica-Bold")
+    .text("Balance Due:", 50, customerInformationTop + 38)
     .text(
-      invoice.subtotal - invoice.paid,
+      invoice.saleInfo.net_amount - invoice.saleInfo.total_payment_amount,
       //formatCurrency(invoice.subtotal - invoice.paid),
       150,
-      customerInformationTop + 30
+      customerInformationTop + 38
     )
 
     .font("Helvetica-Bold")
     .text(invoice.shipping.name+'('+ invoice.shipping.phone +')', 300, customerInformationTop)
     .font("Helvetica")
     .text(invoice.shipping.address, 300, customerInformationTop + 15)
-    .text(
-      invoice.shipping.city +
-        ", " +
-        invoice.shipping.state +
-        ", " +
-        invoice.shipping.country,
-      300,
-      customerInformationTop + 30
-    )
+    // .text(
+    //   invoice.shipping.city +
+    //     ", " +
+    //     invoice.shipping.state +
+    //     ", " +
+    //     invoice.shipping.country,
+    //   300,
+    //   customerInformationTop + 30
+    // )
     .moveDown();
 
   generateHr(doc, 200);
@@ -99,10 +103,10 @@ function generateInvoiceTable(doc, invoice) {
       doc,
       position,
       item.identity_code,
-      item.item,
-      item.amount / item.quantity,
+      item.productName,
+      item.sale_price,
       item.quantity,
-      item.amount
+      item.sale_amount
     );
 
     generateHr(doc, position + 20);
@@ -116,7 +120,7 @@ function generateInvoiceTable(doc, invoice) {
     "",
     "Subtotal",
     "",
-    invoice.subtotal
+    invoice.saleInfo.net_amount
   );
 
   const paidToDatePosition = subtotalPosition + 20;
@@ -127,7 +131,7 @@ function generateInvoiceTable(doc, invoice) {
     "",
     "Paid To Date",
     "",
-    invoice.paid
+    invoice.saleInfo.total_payment_amount
   );
 
   const duePosition = paidToDatePosition + 25;
@@ -139,7 +143,7 @@ function generateInvoiceTable(doc, invoice) {
     "",
     "Balance Due",
     "",
-    invoice.subtotal - invoice.paid
+    invoice.saleInfo.net_amount - invoice.saleInfo.total_payment_amount
   );
   doc.font("Helvetica");
 }

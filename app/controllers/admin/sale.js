@@ -5,6 +5,7 @@ module.exports = class sale extends Controller {
         super();
     }
     async pointOfSale(Req, Res) {
+        const fs = require("fs");
         let data = {
             Request: Req,
             errors: Req.flash('errors')[0],
@@ -141,6 +142,8 @@ module.exports = class sale extends Controller {
                 due_collection_expected_date_req_data = expectedDateGenerateForDueCollection(Req,installment_duration,saveSaleInfo,saveCustomer);
                 let saveCustomerDueCollDates = await ExpectedDueCollectionDatesModel.saveCustomerDueCollectionDate(due_collection_expected_date_req_data);
             }
+            Req.session.sale_invoice_num = invoice_no;
+            await generateInvoice(Req,Res,invoice_no);
             await ActivityLogModel.saveLogData(Req,Res,'Sale has been created by',SaleInfoModel.table,saveSaleInfo);
             Req.session.flash_toastr_success = `Data saved successfully! Invoice NO: ${invoice_no}`;
         }
@@ -231,115 +234,45 @@ module.exports = class sale extends Controller {
 
     
     async invoiceDownload(Req, Res) {
-        const fs = require("fs");
+       // const fs = require("fs");
+       const fs = require('fs-extra');
         const invoice = {};
         try {
             let invoiceNum = Req.params["invoiceNum"];
-        var basePath = `./public/file_storage/`;
-        var fullPath = `./public/file_storage/invoices/`;
-          // check if directory exists
-        if (!fs.existsSync(basePath)) {
+            var basePath = `./public/file_storage/`;
+            var fullPath = `./public/file_storage/invoices/`;
+            // check if directory exists
+            if (!fs.existsSync(basePath)) {
+                // if not create directory
+                fs.mkdirSync(basePath);
+            }
+            if (!fs.existsSync(fullPath)) {
             // if not create directory
-            fs.mkdirSync(basePath);
-        }
-        if (!fs.existsSync(fullPath)) {
-        // if not create directory
-            fs.mkdirSync(fullPath);
-        }
-        let SaleInfoModel = loadModel('SaleInfoModel');
-        let SaleItemModel = loadModel('SaleItemModel');
-        let CustomerModel = loadModel('CustomerModel');
-
-        let saleInfo = await SaleInfoModel.getSaleInfoByInvoiceNUm(invoiceNum);
-        if (saleInfo) {
-            let saleItems = await SaleItemModel.getSaleItemsBySaleInfo(saleInfo.id);
-            let customerInfo = await CustomerModel.getCustomerInfoByid(saleInfo.customer_id);
-            invoice.shipping=customerInfo;
-            invoice.items=saleItems;
-            invoice.saleInfo=saleInfo;
-        }
-
-        const { createInvoice } = loadLibrary('createinvoice');
-        // const invoice = {
-        //     shipping: {
-        //         name: "Nure Ala Moududi",
-        //         phone:'0170995314',
-        //         address: "1234 Main Street",
-        //         city: "Bogura",
-        //         state: "Bogura",
-        //         country: "Bangladesh",
-        //         postal_code: 5800
-        //     },
-        //     items: [
-        //     {
-        //         identity_code:"5tgv",
-        //         item: "TC 100",
-        //         quantity: 2,
-        //         amount: 6000
-        //     },
-        //     {
-        //         identity_code:"6tgv",
-        //         item: "USB_EXT",
-        //         quantity: 1,
-        //         amount: 2000
-        //     },
-        //     {
-        //         identity_code:"6tgv",
-        //         item: "USB_EXT",
-        //         quantity: 1,
-        //         amount: 2000
-        //     }
-        //     ,
-        //     {
-        //         identity_code:"6tgv",
-        //         item: "USB_EXT",
-        //         quantity: 1,
-        //         amount: 2000
-        //     }
-        //     ,
-        //     {
-        //         identity_code:"6tgv",
-        //         item: "USB_EXT",
-        //         quantity: 1,
-        //         amount: 2000
-        //     }
-        //     ,
-        //     {
-        //         identity_code:"6tgv",
-        //         item: "USB_EXT",
-        //         quantity: 1,
-        //         amount: 2000
-        //     }
-        //     ,
-        //     {
-        //         identity_code:"6tgv",
-        //         item: "USB_EXT",
-        //         quantity: 1,
-        //         amount: 2000
-        //     }
-        //     ,
-        //     {
-        //         identity_code:"6tgv",
-        //         item: "USB_EXT",
-        //         quantity: 1,
-        //         amount: 2000
-        //     }
-        //     ,
-        //     {
-        //         identity_code:"6tgv",
-        //         item: "USB_EXT",
-        //         quantity: 1,
-        //         amount: 2000
-        //     }
-            
-        //     ],
-        //     subtotal: 8000,
-        //     paid: 8000,
-        //     invoice_nr: invoiceNum,
-        // };
+                fs.mkdirSync(fullPath);
+            }
+           //delete folder file
+           await fs.emptyDir(fullPath);
+            let SaleInfoModel = loadModel('SaleInfoModel');
+            let SaleItemModel = loadModel('SaleItemModel');
+            let CustomerModel = loadModel('CustomerModel');
+            if (invoiceNum) {
+                let saleInfo = await SaleInfoModel.getSaleInfoByInvoiceNUm(invoiceNum);
+            if (saleInfo) {
+                let saleItems = await SaleItemModel.getSaleItemsBySaleInfo(saleInfo.id);
+                let customerInfo = await CustomerModel.getCustomerInfoByid(saleInfo.customer_id);
+                invoice.shipping=customerInfo;
+                invoice.items=saleItems;
+                invoice.saleInfo=saleInfo;
+            }
+            const { createInvoice } = loadLibrary('createinvoice');
             let fileName = fullPath +invoiceNum +'.pdf';
             createInvoice(invoice, fileName);
-            return back(Req,Res);
+            Res.redirect(`/file_storage/invoices/${invoiceNum}.pdf`);
+            }else{
+                Req.session.flash_toastr_error = 'Invoice Number is not valid!.';
+                return back(Req,Res);
+            }
+
         } catch (error) {
             errorLog(Req,Res,error);
             Req.session.flash_toastr_error = 'Something Went Wrong!.';
@@ -413,3 +346,50 @@ function expectedDateGenerateForDueCollection(Req,installment_duration,saleInfoI
     
 }
 
+async function generateInvoice(Req,Res,invoice_num) {
+    //const fs = require("fs");
+    const fs = require('fs-extra')
+        const invoice = {};
+        try {
+            let invoiceNum = invoice_num;
+            var basePath = `./public/file_storage/`;
+            var fullPath = `./public/file_storage/invoices/`;
+            // check if directory exists
+            if (!fs.existsSync(basePath)) {
+                // if not create directory
+                fs.mkdirSync(basePath);
+            }
+            if (!fs.existsSync(fullPath)) {
+            // if not create directory
+                fs.mkdirSync(fullPath);
+            }
+            //delete folder file
+            await fs.emptyDir(fullPath);
+            let SaleInfoModel = loadModel('SaleInfoModel');
+            let SaleItemModel = loadModel('SaleItemModel');
+            let CustomerModel = loadModel('CustomerModel');
+            if (invoiceNum) {
+                let saleInfo = await SaleInfoModel.getSaleInfoByInvoiceNUm(invoiceNum);
+            if (saleInfo) {
+                let saleItems = await SaleItemModel.getSaleItemsBySaleInfo(saleInfo.id);
+                let customerInfo = await CustomerModel.getCustomerInfoByid(saleInfo.customer_id);
+                invoice.shipping=customerInfo;
+                invoice.items=saleItems;
+                invoice.saleInfo=saleInfo;
+            }
+            const { createInvoice } = loadLibrary('createinvoice');
+            let fileName = fullPath +invoiceNum +'.pdf';
+            createInvoice(invoice, fileName);
+            return 'SUCCESS';
+            }else{
+                Req.session.flash_toastr_error = 'Invoice Number is not valid!.';
+                return 'ERROR';
+            }
+
+        } catch (error) {
+            console.log(error);
+            errorLog(Req,Res,error);
+            Req.session.flash_toastr_error = 'Something Went Wrong!.';
+            return 'ERROR';
+        }
+}

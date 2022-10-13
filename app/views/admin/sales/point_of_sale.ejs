@@ -261,13 +261,12 @@
                             <button type="button" class="btn btn-outline-danger btn-block btn-sm"><i class="fa fa-times"></i>  CANCEL</button>
                             </div>
                             <div class="col-md-6">
-                            <button type="submit" class="btn btn-outline-success btn-block btn-sm"><i class="fa fa-save"></i>  SAVE ORDER</button>
-                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#staticBackdrop">
-                                Invoice Modal
-                              </button>
+                                <button type="submit" class="btn btn-outline-success btn-block btn-sm"><i class="fa fa-save"></i>  SAVE ORDER</button>
                             </div>
-                           
-                            </div>
+                        </div>
+                        <div class="card-body row">
+                            <button type="button" class="btn btn-outline-primary btn-block btn-sm"><i class="fa fa-save"></i> INVOICE RE-PRINT</button>
+                        </div>
                     </div>
                 </div>
                 </div>
@@ -282,7 +281,7 @@
 </section>
 
   <!-- Modal -->
-  <div class="modal fade" id="staticBackdrop" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal fade" id="invoiceGenModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
         <div class="modal-header">
@@ -293,8 +292,8 @@
           </div>
         <div class="modal-body">
             <h5>Data Saved Successfully!</h5>
-            <h6>Invoice Number:#20221042227595XEF</h6>
-            <a class="btn btn-primary btn-block btn-sm" href="/admin/invoice-download/3456789" target="_blank">
+            <h6>Last Invoice Number:#<%- Request.session.sale_invoice_num; %></h6>
+             <a class="btn btn-warning btn-block btn-sm" href="/file_storage/invoices/<%- Request.session.sale_invoice_num; %>.pdf" target="_blank">
                 <i class="fa fa-download"></i> INVOICE OPEN
              </a>
         </div>
@@ -305,7 +304,10 @@
 
 <script>
      $(function () {
-        //let invoice_num = "<%- Request.session.user.id; %>";
+        let invoice_num = "<%- Request.session.sale_invoice_num; %>";
+        if (invoice_num) {
+            $('#invoiceGenModal').modal("show");
+        }
         let isinstallMent = "<%- (typeof old != 'undefined') ? old.is_installMent : ''; %>";
         if (isinstallMent) {
                document.getElementById("is_installMent").checked = true;

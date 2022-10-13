@@ -54,6 +54,7 @@ module.exports = class user extends Controller {
         await ActivityLogModel.saveLogData(Req,Res,'has Logged Out','users',Req.session.user.id);
         delete Req.session.user;
         delete Req.session.permissions;
+        delete Req.session.sale_invoice_num;
         Res.redirect(`/admin/login`);
     }
 

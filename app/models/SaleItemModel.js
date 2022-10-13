@@ -18,9 +18,14 @@ module.exports = class SaleItemModel extends Model {
     }
     async getSaleItemsBySaleInfo(sale_info_id) {
         try {
+            let ProductModel = loadModel('ProductModel');
             let rows = await this.db(this.table)
+            .leftJoin(ProductModel.table,ProductModel.table+'.id','=',this.table+'.product_id')
             .where(this.table+'.sale_info_id',sale_info_id)
-            .select();
+            .select([
+                this.table+'.*',
+                ProductModel.table+'.name as productName',
+            ]);
             return rows;
         }
         catch (error) {
