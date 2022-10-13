@@ -302,11 +302,18 @@ module.exports = class sale extends Controller {
                     }else{
                         saleInfo.is_installment ='CASH';
                     }
+
                     let saleItems = await SaleItemModel.getSaleItemsBySaleInfo(saleInfo.id);
                     let customerInfo = await CustomerModel.getCustomerInfoByid(saleInfo.customer_id);
                     let customerDueInfo = await CustomerDueModel.getDueInfoBySaleId(saleInfo.id);
                     let customerNomineeInfo = await CustomerNomineeModel.getCustomerNomineeInfoByid(saleInfo.customer_nominee_id);
-
+                    if (typeof customerDueInfo !=='undefined') {
+                        if (customerDueInfo.is_repayment_completed == 0) {
+                            customerDueInfo.is_repayment_completed ='NOT COMPLETED';
+                        }else{
+                            customerDueInfo.is_repayment_completed ='COMPLETED';
+                        }
+                    }
                     data.customerInfo=customerInfo;
                     data.items=saleItems;
                     data.saleInfo=saleInfo;

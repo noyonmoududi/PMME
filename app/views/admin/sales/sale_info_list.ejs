@@ -96,6 +96,9 @@
                   }).done(function (response) {
                       var tablesaleinfo ='';
                       var tablesaleIte ='';
+                      var customerInfo ='';
+                      var customerNomineeInfo ='';
+                      var customerDueInfo ='';
                         if (response.items.length > 0) {
                           response.items.forEach(element => {
                             tablesaleIte += `<tr>
@@ -113,26 +116,92 @@
                                   <td>${response.saleInfo.net_amount}</td>
                                   <td>${response.saleInfo.down_payment}</td>
                                   <td>${response.saleInfo.total_payment_amount}</td>
-                                  <td>${response.saleInfo.is_installment}</td>
+                                  <td class="text-warning">${response.saleInfo.is_installment}</td>
                                   <td>${response.saleInfo.created_at}</td>
                               </tr>`;
+                        customerInfo += `<tr>
+                                  <td>${response.customerInfo.name}</td>
+                                  <td>${response.customerInfo.address}</td>
+                                  <td>${response.customerInfo.phone}</td>
+                                  <td>${response.customerInfo.email}</td>
+                                  <td>${response.customerInfo.nid_no}</td>
+                              </tr>`;
+                              if (typeof response.customerNomineeInfo !== 'undefined') {
+                                customerNomineeInfo += `<tr>
+                                  <td>${response.customerNomineeInfo.nominee_name}</td>
+                                  <td>${response.customerNomineeInfo.nominee_address}</td>
+                                  <td>${response.customerNomineeInfo.nominee_phone}</td>
+                                  <td>${response.customerNomineeInfo.nominee_email}</td>
+                                  <td>${response.customerNomineeInfo.nominee_nid_no}</td>
+                              </tr>`;
+                              }
+                              if (typeof response.customerDueInfo !== 'undefined') {
+                              customerDueInfo += `<tr>
+                                      <td>${response.customerDueInfo.invoice_no}</td>
+                                      <td>${response.customerDueInfo.invoice_amount}</td>
+                                      <td>${response.customerDueInfo.due_amount}</td>
+                                      <td>${response.customerDueInfo.remaining_amount}</td>
+                                      <td>${response.customerDueInfo.installment_duration}</td>
+                                      <td>${response.customerDueInfo.installment_charge_percentage}</td>
+                                      <td class="text-warning">${response.customerDueInfo.is_repayment_completed}</td>
+                                  </tr>`;
+                            }
 
-                        self.setContent(`<table class="table table-bordered">
-                          <thead>
-                            <tr><th>Invoice Num</th><th>Date</th><th>Total Item</th><th>Net Amount</th><th>Down Payment</th><th>Total Payable Amount</th><th>Sale Type</th><th>Created Date</th></tr>
-                          </thead>
+                        self.setContent(`
+                        <div class="table-responsive">
+                        <table class="table table-responsive table-bordered">
+                            <thead>
+                              <tr><th>Invoice Num</th><th>Date</th><th>Total Item</th><th>Net Amount</th><th>Down Payment</th><th>Total Payable Amount</th><th>Sale Type</th><th>Created Date</th></tr>
+                            </thead>
                           <tbody>
                           ${tablesaleinfo}
                           </tbody>
                           </table>
-                          <table class="table table-bordered">
-                          <thead>
-                            <tr><th>Item Code</th><th>Name</th><th>Sale Price</th><th>Quantity</th><th>Sale Amount</th></tr>
-                          </thead>
-                          <tbody>
-                          ${tablesaleIte}
-                          </tbody>
+                          </div>
+                          <div class="table-responsive">
+                          <table class="table table-responsive table-bordered">
+                            <h4>Invoice Items:</h4>
+                            <thead>
+                              <tr><th>Item Code</th><th>Name</th><th>Sale Price</th><th>Quantity</th><th>Sale Amount</th></tr>
+                            </thead>
+                            <tbody>
+                            ${tablesaleIte}
+                            </tbody>
                           </table>
+                          </div>
+                          <div class="table-responsive">
+                          <table class="table table-responsive table-bordered">
+                            <h4>Customer Info:</h4>
+                            <thead>
+                              <tr><th>Name</th><th>Address</th><th>Phone</th><th>Email</th><th>Nid No</th></tr>
+                            </thead>
+                            <tbody>
+                            ${customerInfo}
+                            </tbody>
+                          </table>
+                          </div>
+                          <div class="table-responsive">
+                          <table class="table table-responsive table-bordered">
+                            <h4>Nominee Info:</h4>
+                            <thead>
+                              <tr><th>Name</th><th>Address</th><th>Phone</th><th>Email</th><th>Nid No</th></tr>
+                            </thead>
+                            <tbody>
+                            ${customerNomineeInfo}
+                            </tbody>
+                          </table>
+                          </div>
+                          <div class="table-responsive">
+                          <table class="table table-bordered">
+                            <h4>Invoice Due:</h4>
+                            <thead>
+                              <tr><th>Invoice</th><th>Invoice Amount</th><th>Due Amount</th><th>Remaining Amt</th><th>Installment Duration</th><th>Installment Charge(%)</th><th class="text-warning">Is Payment Complete</th></tr>
+                            </thead>
+                            <tbody>
+                            ${customerDueInfo}
+                            </tbody>
+                          </table>
+                        </div>
                           `)
                       } else {
                         self.setContent('No Data Found!.');

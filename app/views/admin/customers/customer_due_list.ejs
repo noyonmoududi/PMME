@@ -19,6 +19,7 @@
                 <thead>
                   <tr>
                     <th>SL</th>
+                    <th>Action</th>
                     <th>Customer Name</th>
                     <th>Customer Phone</th>
                     <th>Invoice Number</th>
@@ -28,7 +29,7 @@
                     <th>Due Payment Complete</th>
                     <th>Created Date</th>
                     <th>Last Due Collection Date</th>
-                    <th>Action</th>
+                   
                   </tr>
                 </thead>
                 <tbody>
@@ -36,6 +37,12 @@
                     rows.forEach(row=>{%>
                     <tr>
                         <td><%- sl++ %></td>
+                        <td>
+                          <% if(has_permission(Request, ['due.collection'])){ %>
+                            <a class="btn btn-success btn-sm due-collecction" data-id="<%= row.id %>" data-inoviceNum="<%= row.invoice_no %>" data-dueamount="<%= row.remaining_amount %>"><i class="fas fa-plus-circle"></i> ADD</a>
+                          <% } %>
+                          <a class="btn btn-warning btn-sm check-details" data-id="<%= row.invoice_no %>"><i class="fa fa-eye"></i> DETAILS</a>
+                        </td>
                         <td><%- row.customer_name %></td>
                         <td><%- row.customer_phone %></td>
                         <td><%- row.invoice_no %></td>
@@ -49,7 +56,6 @@
                         </td>
                         <td><%- row.created_at %></td>
                         <td><%- row.last_updated_at %></td>
-                        <td></td>
                     </tr>
                 <% }) }else{%>
                     <tr>
@@ -97,45 +103,52 @@
      
       });
      
-      $(document).on('click','.add-stock',function (e) {
+      $(document).on('click','.due-collecction',function (e) {
           e.preventDefault();
           var product_id = $(this).attr('data-id');
-          var identity_code = $(this).attr('data-code');
+          var invoiceNum = $(this).attr('data-inoviceNum');
+          var dueamount = $(this).attr('data-dueamount');
           $.confirm({
-                      title: `Add Quantity For # ${identity_code}`,
+                      title: `Due Payment For # ${invoiceNum}`,
                       content: '' +
-                      '<form class="formName" id="inventoryForm">' +
+                      '<form class="formName" id="dueCollectionForm">' +
+                        '<hr>' +
+                        '<h3>Due Amount: '+dueamount+'</h3>' +
+                        '<div class="form-group">' +
+                        '<label>Invoice Num:</label>' +
+                        '<input type="text" name="invoice_no" class="invoice_no form-control" value="'+invoiceNum+'" required readonly />' +
+                        '</div>' +
                       '<div class="form-group">' +
-                      '<label>Quantity:</label>' +
-                      '<input type="number" name="quantity" minlength="0" placeholder="Product Quantity" class="quantity form-control" required />' +
+                      '<label>Payment Amount:</label>' +
+                      '<input type="number" name="amount" minlength="0" placeholder="Payment Amount" class="amount form-control" required />' +
                       '</div>' +
                       '</form>',
                       buttons: {
                           formSubmit: {
                               text: 'SAVE',
                               btnClass: 'btn-blue btn-success',
-                              action: function () {
-                                let checkUrl = `/admin/inventory/${product_id}/${identity_code}/inventory-save`;
-                                var formValue = $("#inventoryForm").serialize();
-                                var qty = this.$content.find('.quantity').val();
-                                if (product_id && identity_code && qty > 0 ) {
-                                    $.ajax({
-                                    url: checkUrl,
-                                    type: "POST",
-                                    data: formValue,
-                                    success: function (ret_data) {
-                                      if (ret_data == 'SUCCESS') { 
-                                        $.alert('Product Stock Added successfully!');
-                                      } else {
-                                        $.alert('Something Went Wrong.Please try again later.');
-                                      }
+                              // action: function () {
+                              //   let checkUrl = `/admin/inventory/${product_id}/${identity_code}/inventory-save`;
+                              //   var formValue = $("#inventoryForm").serialize();
+                              //   var qty = this.$content.find('.quantity').val();
+                              //   if (product_id && identity_code && qty > 0 ) {
+                              //       $.ajax({
+                              //       url: checkUrl,
+                              //       type: "POST",
+                              //       data: formValue,
+                              //       success: function (ret_data) {
+                              //         if (ret_data == 'SUCCESS') { 
+                              //           $.alert('Product Stock Added successfully!');
+                              //         } else {
+                              //           $.alert('Something Went Wrong.Please try again later.');
+                              //         }
                                       
-                                    }
-                                  })
-                                }else{
-                                  $.alert('Quantity Must be greater than 0.!');
-                                }
-                              }
+                              //       }
+                              //     })
+                              //   }else{
+                              //     $.alert('Quantity Must be greater than 0.!');
+                              //   }
+                              // }
                           },
                           cancel: function () {
                               //close
