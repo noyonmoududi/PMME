@@ -19,6 +19,7 @@
                 <thead>
                   <tr>
                     <th>SL</th>
+                    <th>Action</th>
                     <th>Invoice Num</th>
                     <th>Invoice Date</th>
                     <th>Net Amount</th>
@@ -27,7 +28,7 @@
                     <th>Customer Phone</th>
                     <th>Payment Type</th>
                     <th>Is Installment</th>
-                    <th>Action</th>
+                   
                   </tr>
                 </thead>
                 <tbody>
@@ -35,6 +36,9 @@
                     rows.forEach(row=>{%>
                     <tr>
                         <td><%- sl++ %></td>
+                        <td>
+                          <a class="btn btn-warning btn-sm check-details" data-id="<%= row.invoice_no %>"><i class="fa fa-eye"></i> Details</a>
+                        </td>
                         <td><%- row.invoice_no %></td>
                         <td><%- row.invoice_date %></td>
                         <td><%- row.net_amount %></td>
@@ -47,7 +51,7 @@
                           <%- row.is_installment == 1 ? 'Installment' : 'CASH' %>
                           </span>
                         </td>
-                        <td></td>
+                       
                     </tr>
                 <% }) }else{%>
                     <tr>
@@ -61,7 +65,7 @@
 
           <div class="card-footer clearfix">
             <ul class="pagination pagination-sm m-0 float-right">
-            
+              <li class="page-item"><%- pagination %></li>
             </ul>
           </div>
         </div>
@@ -75,71 +79,71 @@
 
 <script>
   $(function () {
-      $(document).on('click','.delete_btn',function (e) {
-          e.preventDefault();
-          var target = $(this).closest('form.delete_form');
-          $.confirm({
-                  icon: 'fas fa-warning',
-                  title: 'Confirm!',
-                  content: 'Do you want to delete this Product??',
-                  type: 'red',
-                  typeAnimated: true,
-                  buttons: {
-                      confirm: function () {
-                          target.submit();
-                      },
-                      cancel: function () {
+      $('.check-details').on('click',function () {
+          let invoiceNum = $(this).data("id");
+          let checkUrl = '/admin/sale-details/'+invoiceNum;
+          $.alert({
+              title: 'Invoice Details',
+              type: 'green',
+              draggable: true,
+              columnClass: 'col-md-12',
+              content: function () {
+                  var self = this;
+                  return $.ajax({
+                      url: checkUrl,
+                      dataType: 'json',
+                      method: 'get'
+                  }).done(function (response) {
+                      var tablesaleinfo ='';
+                      var tablesaleIte ='';
+                        if (response.items.length > 0) {
+                          response.items.forEach(element => {
+                            tablesaleIte += `<tr>
+                                  <td>${element.identity_code}</td>
+                                  <td>${element.productName}</td>
+                                  <td>${element.sale_price}</td>
+                                  <td>${element.quantity}</td>
+                                  <td>${element.sale_amount}</td>
+                              </tr>`;
+                        });
+                        tablesaleinfo += `<tr>
+                                  <td>${response.saleInfo.invoice_no}</td>
+                                  <td>${response.saleInfo.invoice_date}</td>
+                                  <td>${response.saleInfo.invoice_item_count}</td>
+                                  <td>${response.saleInfo.net_amount}</td>
+                                  <td>${response.saleInfo.down_payment}</td>
+                                  <td>${response.saleInfo.total_payment_amount}</td>
+                                  <td>${response.saleInfo.is_installment}</td>
+                                  <td>${response.saleInfo.created_at}</td>
+                              </tr>`;
+
+                        self.setContent(`<table class="table table-bordered">
+                          <thead>
+                            <tr><th>Invoice Num</th><th>Date</th><th>Total Item</th><th>Net Amount</th><th>Down Payment</th><th>Total Payable Amount</th><th>Sale Type</th><th>Created Date</th></tr>
+                          </thead>
+                          <tbody>
+                          ${tablesaleinfo}
+                          </tbody>
+                          </table>
+                          <table class="table table-bordered">
+                          <thead>
+                            <tr><th>Item Code</th><th>Name</th><th>Sale Price</th><th>Quantity</th><th>Sale Amount</th></tr>
+                          </thead>
+                          <tbody>
+                          ${tablesaleIte}
+                          </tbody>
+                          </table>
+                          `)
+                      } else {
+                        self.setContent('No Data Found!.');
                       }
-                  }
-          });
-     
-      });
-     
-      $(document).on('click','.add-stock',function (e) {
-          e.preventDefault();
-          var product_id = $(this).attr('data-id');
-          var identity_code = $(this).attr('data-code');
-          $.confirm({
-                      title: `Add Quantity For # ${identity_code}`,
-                      content: '' +
-                      '<form class="formName" id="inventoryForm">' +
-                      '<div class="form-group">' +
-                      '<label>Quantity:</label>' +
-                      '<input type="number" name="quantity" minlength="0" placeholder="Product Quantity" class="quantity form-control" required />' +
-                      '</div>' +
-                      '</form>',
-                      buttons: {
-                          formSubmit: {
-                              text: 'SAVE',
-                              btnClass: 'btn-blue btn-success',
-                              action: function () {
-                                let checkUrl = `/admin/inventory/${product_id}/${identity_code}/inventory-save`;
-                                var formValue = $("#inventoryForm").serialize();
-                                var qty = this.$content.find('.quantity').val();
-                                if (product_id && identity_code && qty > 0 ) {
-                                    $.ajax({
-                                    url: checkUrl,
-                                    type: "POST",
-                                    data: formValue,
-                                    success: function (ret_data) {
-                                      if (ret_data == 'SUCCESS') { 
-                                        $.alert('Product Stock Added successfully!');
-                                      } else {
-                                        $.alert('Something Went Wrong.Please try again later.');
-                                      }
-                                      
-                                    }
-                                  })
-                                }else{
-                                  $.alert('Quantity Must be greater than 0.!');
-                                }
-                              }
-                          },
-                          cancel: function () {
-                              //close
-                          },
-                      },
+                     
+                  }).fail(function(){
+                      self.setContent('Something went wrong.');
                   });
-      });
+              }
+          });
+      })
+
   })
 </script>

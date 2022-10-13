@@ -265,7 +265,7 @@
                             </div>
                         </div>
                         <div class="card-body row">
-                            <button type="button" class="btn btn-outline-primary btn-block btn-sm"><i class="fa fa-save"></i> INVOICE RE-PRINT</button>
+                            <button type="button" class="btn btn-outline-primary btn-block btn-sm" data-toggle="modal" data-target="#reprintInvoiceGenModal"><i class="fa fa-save"></i> INVOICE RE-PRINT</button>
                         </div>
                     </div>
                 </div>
@@ -291,8 +291,7 @@
             </button>
           </div>
         <div class="modal-body">
-            <h5>Data Saved Successfully!</h5>
-            <h6>Last Invoice Number:#<%- Request.session.sale_invoice_num; %></h6>
+            <h4>Last Invoice Number:#<%- Request.session.sale_invoice_num; %></h4>
              <a class="btn btn-warning btn-block btn-sm" href="/file_storage/invoices/<%- Request.session.sale_invoice_num; %>.pdf" target="_blank">
                 <i class="fa fa-download"></i> INVOICE OPEN
              </a>
@@ -300,6 +299,31 @@
       </div>
     </div>
   </div>
+    <!-- Modal -->
+<div class="modal fade" id="reprintInvoiceGenModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalCenterTitle"></h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+        <div class="modal-body">
+            <form method="post" action="/admin/invoice-download" target="_blank">
+                <div class="form-group">
+                    <label>Invoice Number:</label>
+                    <input type="text" class="form-control"  id="invoice_num" name="invoice_num" placeholder="Enter Invoice Number" required>
+                </div>
+                <div class="col-md-6">
+                    <button type="submit" class="btn btn-outline-success btn-block btn-sm"><i class="fa fa-download"></i>INVOICE GENERATE</button>
+                </div>
+            </form>
+           
+        </div>
+        </div>
+    </div>
+</div>
 <%- include('../layout/adminFooter'); -%>
 
 <script>

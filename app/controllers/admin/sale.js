@@ -238,9 +238,12 @@ module.exports = class sale extends Controller {
        const fs = require('fs-extra');
         const invoice = {};
         try {
-            let invoiceNum = Req.params["invoiceNum"];
+            let RequestData = loadValidator(Req, Res);
+            let invoiceNum = RequestData.post('invoice_num', true, 'invoice Num').type('string').val();
             var basePath = `./public/file_storage/`;
             var fullPath = `./public/file_storage/invoices/`;
+            
+          if (!RequestData.validate()) return false;
             // check if directory exists
             if (!fs.existsSync(basePath)) {
                 // if not create directory
@@ -277,6 +280,45 @@ module.exports = class sale extends Controller {
             errorLog(Req,Res,error);
             Req.session.flash_toastr_error = 'Something Went Wrong!.';
            return back(Req, Res);
+        }
+        
+    }
+
+    async saleDetailsByInvoice(Req, Res) {
+
+        try {
+                let data ={};
+                let invoiceNum = Req.params["invoice_num"];
+                let SaleInfoModel = loadModel('SaleInfoModel');
+                let SaleItemModel = loadModel('SaleItemModel');
+                let CustomerModel = loadModel('CustomerModel');
+                let CustomerNomineeModel = loadModel('CustomerNomineeModel');
+                let CustomerDueModel = loadModel('CustomerDueModel');
+                if (invoiceNum) {
+                    let saleInfo = await SaleInfoModel.getSaleInfoByInvoiceNUm(invoiceNum);
+                if (saleInfo) {
+                    if (saleInfo.is_installment == 1) {
+                        saleInfo.is_installment ='INSTALLMENT';
+                    }else{
+                        saleInfo.is_installment ='CASH';
+                    }
+                    let saleItems = await SaleItemModel.getSaleItemsBySaleInfo(saleInfo.id);
+                    let customerInfo = await CustomerModel.getCustomerInfoByid(saleInfo.customer_id);
+                    let customerDueInfo = await CustomerDueModel.getDueInfoBySaleId(saleInfo.id);
+                    let customerNomineeInfo = await CustomerNomineeModel.getCustomerNomineeInfoByid(saleInfo.customer_nominee_id);
+
+                    data.customerInfo=customerInfo;
+                    data.items=saleItems;
+                    data.saleInfo=saleInfo;
+                    data.customerNomineeInfo=customerNomineeInfo;
+                    data.customerDueInfo=customerDueInfo;
+                }
+                Res.send(data);
+            }
+        } catch (error) {
+            errorLog(Req,Res,error);
+            console.log(error);
+            return back(Req,Res);
         }
         
     }
