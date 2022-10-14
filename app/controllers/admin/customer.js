@@ -34,7 +34,9 @@ module.exports = class customer extends Controller {
             });
             if (sort) {
                 if (sort == 1) query_builder.orderBy(CustomerDueModel.table + '.created_at', 'asc')
-                else if (sort == 4) query_builder.orderBy(CustomerDueModel.table + '.created_at', 'desc')
+                else if (sort == 2) query_builder.orderBy(CustomerDueModel.table + '.created_at', 'desc')
+                else if (sort == 3) query_builder.where(CustomerDueModel.table + '.remaining_amount', '>','0')
+                else if (sort == 4) query_builder.where(CustomerDueModel.table + '.remaining_amount', '=','0')
                 else query_builder.orderBy(CustomerDueModel.table + '.id', 'desc')
             } else query_builder.orderBy(CustomerDueModel.table + '.id', 'desc')
 
@@ -55,6 +57,8 @@ module.exports = class customer extends Controller {
                     sort: {
                         1: 'Created At - Ascending',
                         2: 'Created At - Descending',
+                        3: 'Due Balance - Greater Than 0',
+                        4: 'Due Balance - 0',
                     }
                 }
             }
