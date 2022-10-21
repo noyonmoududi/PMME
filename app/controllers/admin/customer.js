@@ -112,4 +112,44 @@ module.exports = class customer extends Controller {
             Res.send("error");
         }
     }
+    async customerDueCollectionSave(Req, Res) {
+        let CustomerDueCollectionModel = loadModel('CustomerDueCollectionModel');
+        let ActivityLogModel = loadModel('ActivityLogModel');
+        try {
+            let req_data={};
+            let RequestData = loadValidator(Req, Res);
+            let customer_due_id = Req.params["customer_due_id"];
+            let invoice_num = Req.params["invoice_num"];
+            req_data = {
+                customer_due_id: customer_due_id,
+                invoice_no: invoice_num,
+                amount: RequestData.post('payment_amount', true, 'payment amount').type('number').val(),
+                remarks:'',
+                created_by:Req.session.user.id,
+                created_at:new Date(),
+            };
+                if (!RequestData.validate()) return false;
+                let CustomerDueModel = loadModel('CustomerDueModel');
+                let existDueamount = await CustomerDueModel.getDueInfoByInvoice(invoice_num);
+                if (typeof existDueamount !=='undefined' && existDueamount.remaining_amount >= req_data.amount) {
+                    let amountSave = await CustomerDueCollectionModel.dueCollectionAmountSave(req_data);   
+                    if (amountSave) {
+                        let updateAmount = await CustomerDueModel.remainingAmountUpdate(
+                            {
+                                id:customer_due_id,
+                                amount:req_data.amount,
+                                user_id:Req.session.user.id
+                            });
+                    }   
+                    await ActivityLogModel.saveLogData(Req,Res,'Due Collection has been added by',CustomerDueCollectionModel.table,amountSave);
+                    Res.send("SUCCESS");
+                }else{
+                    Res.send("ERROR_AMOUNT_NOT_EXIST");
+                }
+        } catch (err) {
+            errorLog(Req,Res,err);
+            console.log(err);
+            Res.send("ERROR");
+        }
+    }
 }
