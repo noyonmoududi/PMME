@@ -78,6 +78,7 @@ route.post('/inventory/:product_id/:identity_code/inventory-save',auth, has_perm
  route.get('/customer-due',auth,has_permission(['customer.due.list']), controller('admin/customer/dueCustomerList'));
  route.get('/customer-info-by-mobile/:mobile',auth, controller('admin/customer/customerInfoByMobile'));
  route.get('/customer-nominee-info-by-mobile/:mobile',auth, controller('admin/customer/customernomineeInfoByMobile'));
+ route.get('/customer-due-collection-details/:due_id',auth, controller('admin/customer/customerDueCollectionDetailsByInvoice'));
  route.post('/customer-due-collection/:customer_due_id/:invoice_num/customer-due-collection-save',auth, has_permission(['due.collection']), controller('admin/customer/customerDueCollectionSave'));
 
 //Providers

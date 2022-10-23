@@ -12,6 +12,10 @@ module.exports = class dashboard extends Controller {
         if (!Req.session.user) {
             return Res.redirect(`/admin/login`);
         }
+        let SaleInfoModel = loadModel('SaleInfoModel');
+        //getTodaySaleInfo
+        let saleSummary = await SaleInfoModel.getTodaySaleInfoSummary();
+console.log(saleSummary);
         Res.render('admin/dashboard/dashboard', data);
     }
 }

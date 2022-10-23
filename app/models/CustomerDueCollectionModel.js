@@ -17,4 +17,20 @@ module.exports = class CustomerDueCollectionModel extends Model {
             return Promise.reject(error);
         }
     }
+    async getDueCollectionDetailsByDueId(customer_due_id) {
+        try {
+            let UserModel = loadModel('UserModel');
+            let result = await this.db(this.table)
+            .leftJoin(UserModel.table,UserModel.table+'.id','=',this.table+'.created_by')
+            .where(this.table+'.customer_due_id',customer_due_id)
+            .select([
+                this.table+'.*',
+                UserModel.table+'.name as created_by_name',
+            ]);
+            return result;
+        }
+        catch (error) {
+            return Promise.reject(error);
+        }
+    }
 }

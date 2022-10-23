@@ -41,7 +41,7 @@
                           <% if(has_permission(Request, ['due.collection'])){ %>
                             <a class="btn btn-success btn-sm due-collecction <%- (row.remaining_amount == 0) ? 'disabled' : '' %>" data-id="<%= row.id %>" data-inoviceNum="<%= row.invoice_no %>" data-dueamount="<%= row.remaining_amount %>"><i class="fas fa-plus-circle"></i> ADD</a>
                           <% } %>
-                          <a class="btn btn-warning btn-sm check-details" data-id="<%= row.invoice_no %>"><i class="fa fa-eye"></i> DETAILS</a>
+                          <a class="btn btn-warning btn-sm check-details" data-id="<%= row.id %>"><i class="fa fa-eye"></i> DETAILS</a>
                         </td>
                         <td><%- row.customer_name %></td>
                         <td><%- row.customer_phone %></td>
@@ -83,25 +83,7 @@
 
 <script>
   $(function () {
-      $(document).on('click','.delete_btn',function (e) {
-          e.preventDefault();
-          var target = $(this).closest('form.delete_form');
-          $.confirm({
-                  icon: 'fas fa-warning',
-                  title: 'Confirm!',
-                  content: 'Do you want to delete this Product??',
-                  type: 'red',
-                  typeAnimated: true,
-                  buttons: {
-                      confirm: function () {
-                          target.submit();
-                      },
-                      cancel: function () {
-                      }
-                  }
-          });
-     
-      });
+      
      
       $(document).on('click','.due-collecction',function (e) {
           e.preventDefault();
@@ -159,5 +141,63 @@
                       },
                   });
       });
+
+      $('.check-details').on('click',function () {
+          let due_id = $(this).data("id");
+          let checkUrl = '/admin/customer-due-collection-details/'+due_id;
+          $.alert({
+              title: '',
+              type: 'green',
+              draggable: true,
+              columnClass: 'col-md-12',
+              content: function () {
+                  var self = this;
+                  return $.ajax({
+                      url: checkUrl,
+                      dataType: 'json',
+                      method: 'get'
+                  }).done(function (response) {
+                      var tableRowR ='';
+                      var invoiceNum=''
+                      var totalCollectionAmt=0;
+                        if (response.length > 0) {
+                          response.forEach((element,index) => {
+                            invoiceNum = element.invoice_no;
+                            totalCollectionAmt += element.amount;
+                            tableRowR += `<tr>
+                                  <td>${index +1}</td>
+                                  <td>${element.amount}</td>
+                                  <td>${element.created_by_name}</td>
+                                  <td>${element.created_at}</td>
+                                  <td>${element.remarks}</td>
+                              </tr>`;
+                        });
+                        
+                        self.setContent(`<div class="row">
+                                            <div class="col-md-12">
+                                              <h4>Due Collection Details For(${invoiceNum})</h4>
+                                              <h5 class="text-warning">Total Due Collection Amount: (${totalCollectionAmt})</h5 class="text-warning">
+                                              <div class="table-responsive">
+                                              <table class="table table-bordered">
+                                                <thead>
+                                                  <tr><th>#</th><th>Collocetion Amount</th><th>Collected By</th><th>Collected Date</th><th>Remarks</th></tr>
+                                                </thead>
+                                                <tbody>
+                                                  ${tableRowR}
+                                                </tbody>
+                                              </table>
+                                            </div>
+                                            </div>
+                                        </div>`)
+                      } else {
+                        self.setContent('No Data Found!.');
+                      }
+                     
+                  }).fail(function(){
+                      self.setContent('Something went wrong.');
+                  });
+              }
+          });
+      })
   })
 </script>

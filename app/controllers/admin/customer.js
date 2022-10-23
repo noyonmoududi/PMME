@@ -152,4 +152,21 @@ module.exports = class customer extends Controller {
             Res.send("ERROR");
         }
     }
+
+    async customerDueCollectionDetailsByInvoice(Req, Res) {
+        try {
+            let due_id = Req.params["due_id"];
+            let CustomerDueCollectionModel = loadModel('CustomerDueCollectionModel');
+            let result = await CustomerDueCollectionModel.getDueCollectionDetailsByDueId(due_id);
+            if (result != 'undefined') {
+                Res.send(result);
+            }else{
+                Res.send('error');
+            }
+        } catch (error) {
+            errorLog(Req,Res,error);
+            console.log(error);
+            Res.send("error");
+        }
+    }
 }

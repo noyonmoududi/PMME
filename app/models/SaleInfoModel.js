@@ -17,6 +17,23 @@ module.exports = class SaleInfoModel extends Model {
             return Promise.reject(error);
         }
     }
+    async getTodaySaleInfoSummary() {
+        try {
+            const from = '2022-10-03';
+            const to = '2022-10-14';
+            let row = await  this.db.raw(`SELECT 
+            SUM(invoice_item_count) AS sale_item_count,
+            SUM(net_amount) AS total_net_amt, 
+            SUM(total_payment_amount) AS total_payment_amt, 
+            (SUM(net_amount)- SUM(total_payment_amount)) AS total_due_amount
+            FROM sale_info
+            WHERE DATE(invoice_date) BETWEEN '2022-10-03' AND '2022-10-03'`)
+            return row[0];
+        }
+        catch (error) {
+            return Promise.reject(error);
+        }
+    }
     async saveSaleInfoData(req_obj) {
         try {
             let insertData = await this.db(this.table).insert({ ...req_obj });
