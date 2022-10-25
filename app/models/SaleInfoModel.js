@@ -17,17 +17,15 @@ module.exports = class SaleInfoModel extends Model {
             return Promise.reject(error);
         }
     }
-    async getTodaySaleInfoSummary() {
+    async getTodaySaleInfoSummary(fromDate, todate) {
         try {
-            const from = '2022-10-03';
-            const to = '2022-10-14';
             let row = await  this.db.raw(`SELECT 
-            SUM(invoice_item_count) AS sale_item_count,
-            SUM(net_amount) AS total_net_amt, 
-            SUM(total_payment_amount) AS total_payment_amt, 
-            (SUM(net_amount)- SUM(total_payment_amount)) AS total_due_amount
-            FROM sale_info
-            WHERE DATE(invoice_date) BETWEEN '2022-10-03' AND '2022-10-03'`)
+            IFNULL(SUM(invoice_item_count), 0) AS sale_item_count,
+            IFNULL(SUM(net_amount),0) AS total_net_amt, 
+            IFNULL(SUM(total_payment_amount),0) AS total_payment_amt, 
+            IFNULL((SUM(net_amount)- SUM(total_payment_amount)),0) AS total_due_amount
+            FROM ${this.table}
+            WHERE DATE(invoice_date) BETWEEN '${fromDate}' AND '${todate}'`)
             return row[0];
         }
         catch (error) {

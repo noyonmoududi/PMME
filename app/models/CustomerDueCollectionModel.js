@@ -33,4 +33,17 @@ module.exports = class CustomerDueCollectionModel extends Model {
             return Promise.reject(error);
         }
     }
+
+    async getTodayDueCollectionSummary(fromDate, todate) {
+        try {
+            let row = await  this.db.raw(`SELECT 
+            IFNULL(SUM(amount), 0) AS today_due_collection
+            FROM ${this.table}
+            WHERE DATE(created_at) BETWEEN '${fromDate}' AND '${todate}'`)
+            return row[0];
+        }
+        catch (error) {
+            return Promise.reject(error);
+        }
+    }
 }
