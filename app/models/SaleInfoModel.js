@@ -32,6 +32,19 @@ module.exports = class SaleInfoModel extends Model {
             return Promise.reject(error);
         }
     }
+    async getTodaySaleInfoByDate(fromDate, todate) {
+        let CustomerModel = loadModel('CustomerModel');
+        try {
+            let row = await  this.db.raw(`SELECT *, ${CustomerModel.table}.name AS customer_name
+                                            FROM ${this.table}
+                                            LEFT  JOIN ${CustomerModel.table} ON ${this.table}.customer_id=${CustomerModel.table}.id
+                                            WHERE DATE(${this.table}.invoice_date) BETWEEN '${fromDate}' AND  '${todate}';`)
+            return row[0];
+        }
+        catch (error) {
+            return Promise.reject(error);
+        }
+    }
     async saveSaleInfoData(req_obj) {
         try {
             let insertData = await this.db(this.table).insert({ ...req_obj });

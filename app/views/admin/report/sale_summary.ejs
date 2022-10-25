@@ -1,0 +1,50 @@
+<%- include('../layout/adminHeader'); -%>
+
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header d-flex p-0">
+            <h3 class="card-title p-3"><b><%- (typeof page_title != 'undefined') ? page_title : ''; %></b></h3>
+            <ul class="nav nav-pills ml-auto p-2">
+              </ul>
+          </div>
+
+            <div class="card-body">
+                <form action="/admin/report/sale-summary-download" method="post" autocomplete="off" target="_blank">
+                    <div class="row">
+                        <div class="col-md-3"></div>
+                        <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="name">From Date</label>
+                                    <input type="text" class="form-control" id="from_date" name="from_date" readonly required>
+                                    <p class="text-danger"><%= (typeof errors != 'undefined' && errors.from_date)?errors.from_date:''; %></p>
+                                    </div>
+                                <div class="form-group">
+                                    <label for="name">To Date</label>
+                                    <input type="text" class="form-control" id="to_date" name="to_date" readonly required>
+                                    <p class="text-danger"><%= (typeof errors != 'undefined' && errors.to_date)?errors.to_date:''; %></p>
+                                    </div>
+                                <button type="submit" class="btn btn-primary"><i class="fa fa-download"></i> Submit</button>
+                                </div>
+                        </div>
+                        <div class="col-md-3"></div>
+                    </div>
+                </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%- include('../layout/adminFooter'); -%>
+
+<script>
+     $(function () {
+      $('#from_date, #to_date').datepicker({
+            format: "yyyy-mm-dd",
+            autoclose: true,
+        }).datepicker("setDate" , new Date());
+    });
+</script>

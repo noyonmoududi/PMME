@@ -5,7 +5,6 @@ module.exports = class sale extends Controller {
         super();
     }
     async pointOfSale(Req, Res) {
-        const fs = require("fs");
         let data = {
             Request: Req,
             errors: Req.flash('errors')[0],

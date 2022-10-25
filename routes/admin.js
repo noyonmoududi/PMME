@@ -81,6 +81,10 @@ route.post('/inventory/:product_id/:identity_code/inventory-save',auth, has_perm
  route.get('/customer-due-collection-details/:due_id',auth, controller('admin/customer/customerDueCollectionDetailsByInvoice'));
  route.post('/customer-due-collection/:customer_due_id/:invoice_num/customer-due-collection-save',auth, has_permission(['due.collection']), controller('admin/customer/customerDueCollectionSave'));
 
+ //Report 
+ route.get('/report/sale-summary',auth, has_permission(['sale.summary.report']), controller('admin/report/saleSummary'));
+ route.post('/report/sale-summary-download', auth,has_permission(['sale.summary.report']), controller('admin/report/saleSummaryDownload'));
+
 //Providers
 // route.get('/provider',auth,has_permission(['provider.list']), controller('admin/provider/providerList'));
 // route.get('/provider/provider-create',auth,has_permission(['provider.create']), controller('admin/provider/providerCreate'));
